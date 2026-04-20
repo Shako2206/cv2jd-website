@@ -1,23 +1,26 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY)
 
-const SYSTEM_PROMPT = `You are an expert CV/resume writer and ATS optimisation specialist. Your task is to tailor the provided CV to maximise alignment with the given job description while maintaining authenticity and factual accuracy.
+const PROMPT_TEMPLATE = (cv, jobDescription) => `You are an expert CV/resume writer and ATS optimisation specialist. Tailor the CV below to maximise alignment with the job description while keeping all facts accurate — do not invent roles or achievements.
 
-When rewriting, you must:
-1. Analyse the job description for key requirements, skills, and keywords
-2. Restructure and rewrite the CV to highlight the most relevant experience and skills
-3. Incorporate important keywords naturally throughout (especially in the summary and bullet points)
-4. Use strong action verbs and quantify achievements wherever the original data supports it
-5. Ensure strict ATS-friendly formatting: no tables, columns, graphics, or special characters
-6. Reframe existing experience to match the language and priorities of the target role
-7. Preserve all factual information — do not invent roles, skills, or achievements
+Rules:
+- ATS-friendly plain text only (no tables, columns, graphics, or special characters)
+- Incorporate key job-description keywords naturally
+- Use strong action verbs and quantify achievements where the original data supports it
+- Reframe experience to match the language of the target role
 
-Respond ONLY with a valid JSON object (no markdown, no code fences) with exactly these keys:
-- "tailoredCV": the complete rewritten CV as a plain text string (use \\n for line breaks)
-- "keywords": an array of strings — the most important keywords/phrases incorporated
-- "matchScore": an integer 0–100 representing estimated ATS alignment
-- "improvements": an array of strings — concise descriptions of the key changes made`
+JOB DESCRIPTION:
+${jobDescription}
+
+ORIGINAL CV:
+${cv}
+
+Respond ONLY with a valid JSON object (no markdown fences) with exactly these keys:
+- "tailoredCV": complete rewritten CV as a plain text string (use \\n for line breaks)
+- "keywords": array of strings — the key terms incorporated
+- "matchScore": integer 0–100 — estimated ATS alignment
+- "improvements": array of strings — the key changes made`
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -30,39 +33,23 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Both cv and jobDescription are required.' })
   }
 
-  if (cv.length > 50000 || jobDescription.length > 20000) {
-    return res.status(400).json({ error: 'Input too large. Please shorten your CV or job description.' })
+  if (!process.env.GOOGLE_API_KEY) {
+    return res.status(503).json({ error: 'API key not configured. Add GOOGLE_API_KEY to your environment variables.' })
   }
 
   try {
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `JOB DESCRIPTION:\n${jobDescription}\n\n---\n\nORIGINAL CV:\n${cv}`,
-              cache_control: { type: 'ephemeral' },
-            },
-          ],
-        },
-      ],
-    })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
-    const rawText = message.content.find(b => b.type === 'text')?.text ?? ''
+    const result = await model.generateContent(PROMPT_TEMPLATE(cv, jobDescription))
+    const rawText = result.response.text()
 
-    // Strip any accidental markdown fences before parsing
+    // Strip any accidental markdown fences
     const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
     let parsed
     try {
       parsed = JSON.parse(cleaned)
     } catch {
-      // Fallback: try to extract a JSON object from the response
       const match = cleaned.match(/\{[\s\S]*\}/)
       if (!match) {
         return res.status(502).json({ error: 'AI returned an unexpected format. Please try again.' })
@@ -70,24 +57,17 @@ export default async function handler(req, res) {
       parsed = JSON.parse(match[0])
     }
 
-    // Normalise types so the frontend never breaks
-    const tailoredCV = typeof parsed.tailoredCV === 'string' ? parsed.tailoredCV : ''
-    const keywords = Array.isArray(parsed.keywords) ? parsed.keywords : []
-    const matchScore = typeof parsed.matchScore === 'number' ? Math.round(parsed.matchScore) : 0
-    const improvements = Array.isArray(parsed.improvements) ? parsed.improvements : []
-
-    return res.status(200).json({ tailoredCV, keywords, matchScore, improvements })
+    return res.status(200).json({
+      tailoredCV: typeof parsed.tailoredCV === 'string' ? parsed.tailoredCV : '',
+      keywords: Array.isArray(parsed.keywords) ? parsed.keywords : [],
+      matchScore: typeof parsed.matchScore === 'number' ? Math.round(parsed.matchScore) : 0,
+      improvements: Array.isArray(parsed.improvements) ? parsed.improvements : [],
+    })
   } catch (err) {
-    if (err instanceof Anthropic.AuthenticationError) {
-      return res.status(401).json({ error: 'Invalid API key. Check your ANTHROPIC_API_KEY environment variable.' })
-    }
-    if (err instanceof Anthropic.RateLimitError) {
-      return res.status(429).json({ error: 'Rate limit reached. Please wait a moment and try again.' })
-    }
-    if (err instanceof Anthropic.APIError) {
-      return res.status(502).json({ error: `AI service error (${err.status}). Please try again.` })
-    }
     console.error('Tailor API error:', err)
-    return res.status(500).json({ error: 'An unexpected error occurred. Please try again.' })
+    if (err?.message?.includes('API_KEY')) {
+      return res.status(401).json({ error: 'Invalid API key. Check your GOOGLE_API_KEY environment variable.' })
+    }
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' })
   }
 }
