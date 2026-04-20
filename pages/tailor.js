@@ -107,7 +107,7 @@ export default function Tailor() {
       </nav>
 
       {/* MAIN */}
-      <main style={{ background: '#f8f8fc', minHeight: 'calc(100vh - 64px)', padding: '32px 2rem' }}>
+      <main className="mainContent" style={{ background: '#f8f8fc', minHeight: 'calc(100vh - 64px)', padding: '32px 2rem' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
 
           {/* Header */}
@@ -121,7 +121,7 @@ export default function Tailor() {
           </div>
 
           {/* Two-column input */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
+          <div className="inputGrid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
             <InputCard
               label="Your Current CV"
               placeholder={"Paste your CV or resume here...\n\nTip: Include your full work history, skills, education, and any other relevant sections. The more detail you provide, the better the tailoring."}
@@ -286,6 +286,10 @@ export default function Tailor() {
       <style jsx global>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         textarea:focus { outline: none; }
+        @media (max-width: 768px) {
+          .inputGrid { grid-template-columns: 1fr !important; }
+          .mainContent { padding: 20px 1rem !important; }
+        }
       `}</style>
     </>
   )

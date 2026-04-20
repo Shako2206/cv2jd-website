@@ -69,7 +69,7 @@ export default function Home() {
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+          <div className="navLinks" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
             {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['#pricing', 'Pricing']].map(([href, label]) => (
               <a key={href} href={href} style={{ color: '#555', fontSize: 15, fontWeight: 500, transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = '#764ba2'}
@@ -78,7 +78,7 @@ export default function Home() {
           </div>
 
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <Link href="/tailor" style={{ color: '#555', fontSize: 15, fontWeight: 500 }}>Log in</Link>
+            <Link href="/tailor" className="navLogin" style={{ color: '#555', fontSize: 15, fontWeight: 500 }}>Log in</Link>
             <Link href="/tailor" style={{
               background: 'linear-gradient(135deg, #667eea, #764ba2)',
               color: 'white', padding: '10px 24px', borderRadius: 50,
@@ -108,7 +108,7 @@ export default function Home() {
           }} />
         ))}
 
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '5rem 2rem 6rem', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
+        <div className="heroGrid" style={{ maxWidth: 1200, margin: '0 auto', padding: '5rem 2rem 6rem', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
           {/* Left */}
           <div style={{ color: 'white' }}>
             <div style={{
@@ -152,7 +152,7 @@ export default function Home() {
           </div>
 
           {/* Right — mock CV card */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="heroCard" style={{ display: 'flex', justifyContent: 'center' }}>
             <div style={{
               background: 'white', borderRadius: 20, padding: 28,
               boxShadow: '0 24px 80px rgba(0,0,0,0.3)', width: '100%', maxWidth: 440,
@@ -307,6 +307,14 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .navLinks { display: none !important; }
+          .navLogin { display: none !important; }
+          .heroGrid { grid-template-columns: 1fr !important; padding-top: 3rem !important; padding-bottom: 3.5rem !important; }
+          .heroCard { display: none !important; }
+        }
+      `}</style>
     </>
   )
 }
