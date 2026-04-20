@@ -102,7 +102,7 @@ export default function Tailor() {
               cv2jd
             </span>
           </Link>
-          <span style={{ fontSize: 14, color: '#888', fontWeight: 500 }}>AI CV Tailoring Tool</span>
+          <span className="navSubtitle" style={{ fontSize: 14, color: '#888', fontWeight: 500 }}>AI CV Tailoring Tool</span>
         </div>
       </nav>
 
@@ -175,7 +175,7 @@ export default function Tailor() {
           {result && (
             <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8e8f0', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
               {/* Results header */}
-              <div style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+              <div className="resultsHeader" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
                 <div style={{ color: 'white' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Result</div>
                   <div style={{ fontSize: 22, fontWeight: 800 }}>Your Tailored CV is Ready</div>
@@ -188,7 +188,7 @@ export default function Tailor() {
                     <div style={{ fontSize: 28, fontWeight: 900, color: score >= 80 ? '#4ade80' : score >= 60 ? '#fbbf24' : '#f87171' }}>{score}%</div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: 10 }}>
+                  <div className="resultsBtns" style={{ display: 'flex', gap: 10 }}>
                     <button onClick={handleCopy} style={{
                       background: copied ? '#4ade80' : 'white', color: copied ? 'white' : '#764ba2',
                       border: 'none', padding: '10px 22px', borderRadius: 25, fontSize: 14, fontWeight: 700,
@@ -208,7 +208,7 @@ export default function Tailor() {
               </div>
 
               {/* Tabs */}
-              <div style={{ display: 'flex', borderBottom: '1px solid #eee', background: '#fafafa' }}>
+              <div className="tabsWrap" style={{ display: 'flex', borderBottom: '1px solid #eee', background: '#fafafa' }}>
                 {[
                   { id: 'cv', label: '📄 Tailored CV' },
                   { id: 'keywords', label: '🔑 Keywords' },
@@ -227,7 +227,7 @@ export default function Tailor() {
               </div>
 
               {/* Tab content */}
-              <div style={{ padding: 28 }}>
+              <div className="tabContent" style={{ padding: 28 }}>
                 {activeTab === 'cv' && (
                   <pre style={{
                     whiteSpace: 'pre-wrap', fontFamily: 'inherit', fontSize: 15,
@@ -287,8 +287,14 @@ export default function Tailor() {
         @keyframes spin { to { transform: rotate(360deg); } }
         textarea:focus { outline: none; }
         @media (max-width: 768px) {
+          .navSubtitle { display: none !important; }
           .inputGrid { grid-template-columns: 1fr !important; }
           .mainContent { padding: 20px 1rem !important; }
+          .resultsHeader { padding: 16px !important; }
+          .resultsBtns { flex-direction: column !important; width: 100% !important; }
+          .resultsBtns button { width: 100% !important; justify-content: center !important; }
+          .tabsWrap button { padding: 10px 10px !important; font-size: 12px !important; flex: 1 !important; }
+          .tabContent { padding: 16px !important; }
         }
       `}</style>
     </>

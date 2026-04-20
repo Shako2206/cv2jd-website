@@ -56,7 +56,7 @@ export default function Home() {
         background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="navInner" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               width: 36, height: 36, borderRadius: 10,
@@ -130,7 +130,7 @@ export default function Home() {
               Our AI technology customises your CV to perfectly match each job description, creating ATS-friendly applications that highlight your most relevant skills and experience.
             </p>
 
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            <div className="heroCtas" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
               <Link href="/tailor" style={{
                 background: 'white', color: '#764ba2',
                 padding: '16px 36px', borderRadius: 50, fontSize: 16, fontWeight: 700,
@@ -205,7 +205,7 @@ export default function Home() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="features" style={{ padding: '80px 2rem', background: '#fafafa' }}>
+      <section id="features" className="sectionPad" style={{ padding: '80px 2rem', background: '#fafafa' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
             <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 800, marginBottom: 16, letterSpacing: '-0.5px' }}>
@@ -236,7 +236,7 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" style={{ padding: '80px 2rem', background: 'white' }}>
+      <section id="how-it-works" className="sectionPad" style={{ padding: '80px 2rem', background: 'white' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
             <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 800, marginBottom: 16, letterSpacing: '-0.5px' }}>
@@ -309,10 +309,14 @@ export default function Home() {
       </footer>
       <style jsx global>{`
         @media (max-width: 768px) {
+          .navInner { padding: 0 1rem !important; }
           .navLinks { display: none !important; }
           .navLogin { display: none !important; }
-          .heroGrid { grid-template-columns: 1fr !important; padding-top: 3rem !important; padding-bottom: 3.5rem !important; }
+          .heroGrid { grid-template-columns: 1fr !important; padding: 2.5rem 1rem 3rem !important; }
           .heroCard { display: none !important; }
+          .heroCtas { flex-direction: column !important; }
+          .heroCtas a { text-align: center !important; padding: 14px 24px !important; }
+          .sectionPad { padding: 48px 1rem !important; }
         }
       `}</style>
     </>
