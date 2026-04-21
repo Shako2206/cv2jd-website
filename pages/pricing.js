@@ -1,7 +1,33 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { useState } from 'react'
 
 export default function Pricing() {
+  const [name, setName] = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState(null) // null | 'sending' | 'sent' | 'error'
+  const [errorMsg, setErrorMsg] = useState('')
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!message.trim()) return
+    setStatus('sending')
+    setErrorMsg('')
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, message }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Something went wrong.')
+      setStatus('sent')
+    } catch (err) {
+      setStatus('error')
+      setErrorMsg(err.message)
+    }
+  }
+
   return (
     <>
       <Head>
@@ -39,74 +65,136 @@ export default function Pricing() {
 
       {/* MAIN */}
       <main style={{ minHeight: '100vh', paddingTop: 68, background: 'linear-gradient(180deg, #f8f8fc 0%, #ffffff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 2rem' }}>
-        <div style={{ maxWidth: 640, width: '100%', textAlign: 'center' }}>
+        <div style={{ maxWidth: 600, width: '100%', textAlign: 'center' }}>
 
-          {/* Big emoji */}
-          <div style={{ fontSize: 72, marginBottom: 24 }}>🎉</div>
+          <div style={{ fontSize: 68, marginBottom: 20 }}>🎉</div>
 
-          {/* Headline */}
-          <h1 style={{ fontSize: 'clamp(2.2rem, 4vw, 3.2rem)', fontWeight: 900, color: '#1a1a2e', marginBottom: 20, letterSpacing: '-1px', lineHeight: 1.1 }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: '#1a1a2e', marginBottom: 16, letterSpacing: '-1px', lineHeight: 1.1 }}>
             It&apos;s completely free.<br />
             <span style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               No catch. No card. No plan.
             </span>
           </h1>
 
-          <p style={{ fontSize: '1.15rem', color: '#555', lineHeight: 1.7, marginBottom: 48, maxWidth: 500, margin: '0 auto 48px' }}>
-            cv2jd is free for everyone. No subscriptions, no free trial that expires, no hidden fees. Just paste your CV, paste the job description, and get your tailored CV instantly.
+          <p style={{ fontSize: '1.1rem', color: '#666', lineHeight: 1.7, marginBottom: 48 }}>
+            No subscriptions, no free trial that expires, no hidden fees.<br />
+            Just paste your CV and job description — done.
           </p>
 
-          {/* The one "price" card */}
+          {/* Feedback card */}
           <div style={{
-            background: 'white', borderRadius: 24, padding: '40px 40px',
-            border: '2px solid #e8e8f0', boxShadow: '0 8px 40px rgba(118,75,162,0.1)',
-            marginBottom: 40,
+            background: 'white', borderRadius: 24, padding: '40px',
+            border: '1px solid #e8e8f0', boxShadow: '0 8px 40px rgba(118,75,162,0.08)',
+            textAlign: 'left',
           }}>
-            <div style={{
-              display: 'inline-block', background: 'linear-gradient(135deg, #667eea15, #764ba220)',
-              color: '#764ba2', fontWeight: 700, fontSize: 13, padding: '6px 18px',
-              borderRadius: 30, border: '1px solid #764ba230', marginBottom: 20,
-              textTransform: 'uppercase', letterSpacing: 1,
-            }}>
-              The only thing we ask
+            <div style={{ textAlign: 'center', marginBottom: 28 }}>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>💬</div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1a1a2e', marginBottom: 10 }}>
+                The only thing we ask
+              </h2>
+              <p style={{ color: '#777', fontSize: '0.98rem', lineHeight: 1.65 }}>
+                Your honest feedback — good, bad, or ugly. Did it help? Feel too robotic?
+                Miss the mark? Anything at all makes this better for everyone.
+              </p>
             </div>
 
-            <div style={{ fontSize: 52, marginBottom: 16 }}>💬</div>
+            {status === 'sent' ? (
+              <div style={{
+                background: 'linear-gradient(135deg, #667eea10, #764ba215)',
+                border: '1px solid #764ba230', borderRadius: 16,
+                padding: '32px', textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 44, marginBottom: 12 }}>🙏</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#764ba2', marginBottom: 8 }}>Thank you so much!</div>
+                <div style={{ color: '#666', fontSize: '0.95rem' }}>Your feedback means a lot and helps make cv2jd better for everyone.</div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#555', marginBottom: 6 }}>
+                    Your name <span style={{ color: '#aaa', fontWeight: 400 }}>(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="e.g. Sarah"
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: 12,
+                      border: '1px solid #e0e0ee', fontSize: 15, color: '#333',
+                      outline: 'none', boxSizing: 'border-box',
+                      fontFamily: 'inherit', background: '#fafafa',
+                    }}
+                  />
+                </div>
 
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1a1a2e', marginBottom: 16 }}>
-              Your honest feedback
-            </h2>
+                <div>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#555', marginBottom: 6 }}>
+                    Your feedback <span style={{ color: '#e53e3e' }}>*</span>
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    placeholder="Tell us anything — what worked, what didn't, what you'd love to see next..."
+                    required
+                    rows={5}
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: 12,
+                      border: '1px solid #e0e0ee', fontSize: 15, color: '#333',
+                      outline: 'none', resize: 'vertical', boxSizing: 'border-box',
+                      fontFamily: 'inherit', background: '#fafafa', lineHeight: 1.6,
+                    }}
+                  />
+                </div>
 
-            <p style={{ fontSize: '1rem', color: '#666', lineHeight: 1.7, maxWidth: 420, margin: '0 auto 28px' }}>
-              Did it help? Did it miss the mark? Was the PDF useful? Did it feel too robotic — or just right? Anything at all. Good, bad, or ugly — your opinion is what makes this better for everyone.
-            </p>
+                {status === 'error' && (
+                  <div style={{ background: '#fff1f1', border: '1px solid #fecaca', borderRadius: 10, padding: '12px 16px', color: '#dc2626', fontSize: 14 }}>
+                    ⚠️ {errorMsg}
+                  </div>
+                )}
 
-            <a
-              href="mailto:shahar.korin@gmail.com?subject=cv2jd feedback"
-              style={{
-                display: 'inline-block',
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                color: 'white', padding: '14px 36px', borderRadius: 50,
-                fontSize: 15, fontWeight: 700,
-                boxShadow: '0 6px 24px rgba(118,75,162,0.3)',
-              }}
-            >
-              Send feedback →
-            </a>
+                <button
+                  type="submit"
+                  disabled={status === 'sending' || !message.trim()}
+                  style={{
+                    background: status === 'sending' || !message.trim()
+                      ? '#c4b5fd'
+                      : 'linear-gradient(135deg, #667eea, #764ba2)',
+                    color: 'white', border: 'none', padding: '14px 32px',
+                    borderRadius: 50, fontSize: 16, fontWeight: 700,
+                    cursor: status === 'sending' || !message.trim() ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', gap: 10,
+                  }}
+                >
+                  {status === 'sending' ? (
+                    <>
+                      <span style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.4)', borderTop: '2px solid white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.8s linear infinite' }} />
+                      Sending…
+                    </>
+                  ) : 'Send feedback →'}
+                </button>
+              </form>
+            )}
           </div>
 
-          {/* CTA */}
-          <p style={{ color: '#999', fontSize: 14, marginBottom: 20 }}>Ready to tailor your CV?</p>
-          <Link href="/tailor" style={{
-            display: 'inline-block',
-            background: 'white', color: '#764ba2',
-            padding: '14px 36px', borderRadius: 50, fontSize: 15, fontWeight: 700,
-            border: '2px solid #764ba2',
-          }}>
-            ✨ Start Tailoring — It&apos;s Free
-          </Link>
+          <div style={{ marginTop: 40 }}>
+            <p style={{ color: '#aaa', fontSize: 14, marginBottom: 16 }}>Ready to tailor your CV?</p>
+            <Link href="/tailor" style={{
+              display: 'inline-block', border: '2px solid #764ba2',
+              color: '#764ba2', padding: '12px 32px', borderRadius: 50,
+              fontSize: 15, fontWeight: 700,
+            }}>
+              ✨ Start Tailoring — It&apos;s Free
+            </Link>
+          </div>
         </div>
       </main>
+
+      <style jsx global>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        input:focus, textarea:focus { border-color: #764ba2 !important; box-shadow: 0 0 0 3px rgba(118,75,162,0.1) !important; }
+      `}</style>
     </>
   )
 }
