@@ -104,15 +104,92 @@ export default function Tailor() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  function handleDownload() {
+  async function handleDownload() {
     if (!result?.tailoredCV) return
-    const blob = new Blob([result.tailoredCV], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'tailored-cv.txt'
-    a.click()
-    URL.revokeObjectURL(url)
+    const { jsPDF } = await import('jspdf')
+    const doc = new jsPDF('p', 'mm', 'a4')
+
+    const marginX = 20
+    const marginY = 24
+    const contentW = 170
+    const pageH = 297
+    let y = marginY
+
+    function nextPage() { doc.addPage(); y = marginY }
+
+    function write(text, size, style, color, indent = 0) {
+      doc.setFontSize(size)
+      doc.setFont('helvetica', style)
+      doc.setTextColor(...color)
+      const wrapped = doc.splitTextToSize(text, contentW - indent)
+      const lineH = size * 0.38
+      if (y + wrapped.length * lineH > pageH - 16) nextPage()
+      doc.text(wrapped, marginX + indent, y)
+      y += wrapped.length * lineH
+    }
+
+    const lines = result.tailoredCV.split('\n')
+    let firstLine = true
+
+    for (const raw of lines) {
+      const line = raw.trim()
+
+      if (!line) { y += 3; continue }
+
+      // Name — first non-empty line
+      if (firstLine) {
+        write(line, 20, 'bold', [30, 30, 30])
+        y += 2
+        firstLine = false
+        continue
+      }
+
+      // Contact info — contains @ or + or common separators on short lines
+      if (line.length < 100 && (line.includes('@') || line.match(/\+\d/) || line.match(/^\s*(Phone|E.?mail|Address|Nationality|Date)/i))) {
+        write(line, 9.5, 'normal', [100, 100, 100])
+        y += 1
+        continue
+      }
+
+      // Section header — all caps with optional spaces/slashes
+      if (/^[A-Z][A-Z\s&\/\-]{2,}$/.test(line)) {
+        y += 5
+        write(line, 10.5, 'bold', [102, 126, 234])
+        doc.setDrawColor(180, 180, 220)
+        doc.setLineWidth(0.3)
+        doc.line(marginX, y + 0.5, 190, y + 0.5)
+        y += 4
+        continue
+      }
+
+      // Job title / institution lines — bold, no bullet, not header
+      if (!line.startsWith('•') && !line.startsWith('-') && !line.startsWith('·') && !line.startsWith('□') && line.length < 80 && /^[A-Z]/.test(line) && !line.endsWith('.')) {
+        write(line, 10, 'bold', [40, 40, 40])
+        y += 1
+        continue
+      }
+
+      // Bullet points
+      if (line.startsWith('•') || line.startsWith('-') || line.startsWith('·') || line.startsWith('□')) {
+        const text = line.replace(/^[•\-·□]\s*/, '')
+        doc.setFontSize(9.5)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(60, 60, 60)
+        const wrapped = doc.splitTextToSize(text, contentW - 6)
+        const lineH = 9.5 * 0.38
+        if (y + wrapped.length * lineH > pageH - 16) nextPage()
+        doc.text('•', marginX, y)
+        doc.text(wrapped, marginX + 5, y)
+        y += wrapped.length * lineH + 1
+        continue
+      }
+
+      // Regular text
+      write(line, 9.5, 'normal', [60, 60, 60])
+      y += 0.5
+    }
+
+    doc.save('tailored-cv.pdf')
   }
 
   const score = result?.matchScore ?? 0
@@ -245,7 +322,7 @@ export default function Tailor() {
                       border: '2px solid rgba(255,255,255,0.4)', padding: '10px 22px',
                       borderRadius: 25, fontSize: 14, fontWeight: 700, cursor: 'pointer',
                     }}>
-                      ⬇ Download
+                      ⬇ Download PDF
                     </button>
                   </div>
                 </div>
