@@ -1,24 +1,23 @@
-const PROMPT_TEMPLATE = (cv, jobDescription) => `You are a ruthlessly effective CV tailoring specialist. Your job is NOT to clean or polish the CV — it is to AGGRESSIVELY rewrite it so it mirrors the exact language, skills, and priorities of the job description.
+const PROMPT_TEMPLATE = (cv, jobDescription) => `You are a senior career coach and CV writer with 15 years of experience. Your goal is to subtly and intelligently reposition the candidate's real experience so it resonates with what the employer is looking for — without copying their wording or fabricating anything.
 
-STEP 1 — Extract from the job description:
-- Every required skill, tool, technology, and methodology mentioned
-- The exact words and phrases the employer uses (e.g. if they say "cross-functional collaboration", use that exact phrase)
-- The seniority signals and responsibilities they care most about
+Think of it as translation: the candidate has done relevant things, but described them in their own words. Your job is to redescribe the same real experience in a way that a hiring manager reading this JD will immediately recognise as a strong match.
 
-STEP 2 — Rewrite the CV with these non-negotiable rules:
-1. ADD a Professional Summary at the top (3-4 lines) that reads like it was written for THIS specific job — use the job title and mirror the JD's language directly
-2. REWRITE every bullet point in Work Experience to reflect the JD's priorities. If the candidate did something relevant, describe it using the JD's exact terminology. Expand thin bullet points into strong achievement statements.
-3. REORDER bullet points so the most relevant ones appear first in each role
-4. INJECT keywords from the JD into the Skills section — reorganise skills to lead with what the JD asks for
-5. SHORTEN or REMOVE sections and bullet points that are completely irrelevant to this role
-6. USE the job description's language throughout — if the JD says "microservices", use "microservices" not "distributed systems"
+APPROACH:
+- Read the JD to understand what the role truly requires — the underlying skills, mindset, and impact, not just the keywords
+- Find genuine overlaps between the candidate's real experience and those requirements
+- Reframe existing experience using natural, professional language that hints at those requirements — without copy-pasting the JD's wording
+- Where experience is genuinely relevant but undersold, expand it with appropriate context
+- Where experience is irrelevant to this role, condense or cut it
 
-Rules:
-- Keep all facts accurate — do not invent roles, companies, dates, or qualifications
-- You MAY rephrase, reframe, reorder, expand, or condense existing content
-- ATS-friendly plain text only (no tables, columns, graphics)
-- Strong action verbs on every bullet point
-- If a number or metric exists in the original, keep it; if it can be reasonably inferred, add it
+RULES — strictly follow these:
+1. Never invent a role, responsibility, tool, or achievement that isn't supported by the original CV
+2. Do not copy phrases directly from the job description — restate concepts in the candidate's own professional voice
+3. Add a concise Professional Summary (3-4 lines) that positions the candidate for this specific role naturally
+4. Reorder bullet points within each role so the most relevant come first
+5. Reorganise the Skills section to lead with what matters most for this role
+6. Keep the tone human and authentic — it should not read like an AI rewrote it
+7. ATS-friendly plain text only — no tables, graphics, or special characters
+8. Use strong action verbs; quantify achievements where the original data supports it
 
 JOB DESCRIPTION:
 ${jobDescription}
@@ -28,9 +27,9 @@ ${cv}
 
 Respond ONLY with a valid JSON object (no markdown fences) with exactly these keys:
 - "tailoredCV": complete rewritten CV as a plain text string (use \\n for line breaks)
-- "keywords": array of strings — the key terms from the JD that were woven in
-- "matchScore": integer 0–100 — estimated ATS alignment after tailoring
-- "improvements": array of strings — the specific changes made and why`
+- "keywords": array of strings — the key themes and skills woven in naturally
+- "matchScore": integer 0–100 — estimated ATS and recruiter alignment after tailoring
+- "improvements": array of strings — the specific repositioning decisions made and why`
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
