@@ -29,39 +29,40 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Both cv and jobDescription are required.' })
   }
 
-  const apiKey = process.env.GOOGLE_API_KEY
+  const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) {
-    return res.status(503).json({ error: 'API key not configured — add GOOGLE_API_KEY in your Vercel project settings under Environment Variables, then redeploy.' })
+    return res.status(503).json({ error: 'API key not configured — add GROQ_API_KEY in your Vercel project settings under Environment Variables, then redeploy.' })
   }
 
   try {
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: PROMPT_TEMPLATE(cv, jobDescription) }] }],
-          generationConfig: { temperature: 0.4 },
-        }),
-      }
-    )
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: PROMPT_TEMPLATE(cv, jobDescription) }],
+        temperature: 0.4,
+      }),
+    })
 
-    if (!geminiRes.ok) {
-      const errBody = await geminiRes.json().catch(() => ({}))
-      const errMsg = errBody?.error?.message || geminiRes.statusText
-      console.error('Gemini API error:', geminiRes.status, errMsg)
-      if (geminiRes.status === 401 || geminiRes.status === 403) {
-        return res.status(401).json({ error: `Invalid API key: ${errMsg}` })
+    if (!groqRes.ok) {
+      const errBody = await groqRes.json().catch(() => ({}))
+      const errMsg = errBody?.error?.message || groqRes.statusText
+      console.error('Groq API error:', groqRes.status, errMsg)
+      if (groqRes.status === 401) {
+        return res.status(401).json({ error: `Invalid API key — check your GROQ_API_KEY in Vercel environment variables.` })
       }
-      if (geminiRes.status === 429) {
-        return res.status(429).json({ error: `Quota exceeded: ${errMsg}` })
+      if (groqRes.status === 429) {
+        return res.status(429).json({ error: `Rate limit hit — please wait a moment and try again.` })
       }
-      return res.status(502).json({ error: `Gemini API error ${geminiRes.status}: ${errMsg}` })
+      return res.status(502).json({ error: `Groq API error ${groqRes.status}: ${errMsg}` })
     }
 
-    const data = await geminiRes.json()
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+    const data = await groqRes.json()
+    const rawText = data?.choices?.[0]?.message?.content ?? ''
 
     const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
