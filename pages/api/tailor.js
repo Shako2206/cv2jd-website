@@ -1,7 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY)
-
 const PROMPT_TEMPLATE = (cv, jobDescription) => `You are an expert CV/resume writer and ATS optimisation specialist. Tailor the CV below to maximise alignment with the job description while keeping all facts accurate — do not invent roles or achievements.
 
 Rules:
@@ -34,16 +32,16 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.GOOGLE_API_KEY) {
-    return res.status(503).json({ error: 'API key not configured. Add GOOGLE_API_KEY to your environment variables.' })
+    return res.status(503).json({ error: 'API key not configured — add GOOGLE_API_KEY in your Vercel project settings under Environment Variables, then redeploy.' })
   }
 
   try {
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY)
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const result = await model.generateContent(PROMPT_TEMPLATE(cv, jobDescription))
     const rawText = result.response.text()
 
-    // Strip any accidental markdown fences
     const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
     let parsed
@@ -65,9 +63,13 @@ export default async function handler(req, res) {
     })
   } catch (err) {
     console.error('Tailor API error:', err)
-    if (err?.message?.includes('API_KEY')) {
-      return res.status(401).json({ error: 'Invalid API key. Check your GOOGLE_API_KEY environment variable.' })
+    const msg = err?.message || ''
+    if (msg.toLowerCase().includes('api key') || msg.includes('API_KEY') || msg.includes('403')) {
+      return res.status(401).json({ error: 'Invalid or missing API key. Go to Vercel → your project → Settings → Environment Variables and check that GOOGLE_API_KEY is set correctly, then redeploy.' })
     }
-    return res.status(500).json({ error: 'Something went wrong. Please try again.' })
+    if (msg.includes('quota') || msg.includes('429')) {
+      return res.status(429).json({ error: 'Google API quota exceeded. You may have hit the free tier limit — try again in a minute.' })
+    }
+    return res.status(500).json({ error: `Something went wrong: ${msg || 'unknown error'}. Check Vercel function logs for details.` })
   }
 }
