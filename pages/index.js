@@ -70,7 +70,7 @@ export default function Home() {
           </div>
 
           <div className="navLinks" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
-            {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['#pricing', 'Pricing']].map(([href, label]) => (
+            {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['/pricing', 'Pricing']].map(([href, label]) => (
               <a key={href} href={href} style={{ color: '#555', fontSize: 15, fontWeight: 500, transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = '#764ba2'}
                 onMouseLeave={e => e.target.style.color = '#555'}>{label}</a>
