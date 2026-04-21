@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 const EXAMPLE_JD = `Senior Software Engineer — FinTech (Remote)
 
@@ -19,14 +19,55 @@ Nice to have:
 - Knowledge of PCI-DSS compliance
 - Prior experience at a FinTech or startup`
 
+async function extractTextFromPDF(file) {
+  const pdfjsLib = await import('pdfjs-dist/build/pdf')
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+  const arrayBuffer = await file.arrayBuffer()
+  const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise
+  const pages = []
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i)
+    const content = await page.getTextContent()
+    const lineMap = new Map()
+    content.items.forEach(item => {
+      const y = Math.round(item.transform[5])
+      lineMap.set(y, (lineMap.get(y) || '') + item.str + ' ')
+    })
+    const sorted = [...lineMap.entries()].sort((a, b) => b[0] - a[0])
+    pages.push(sorted.map(([, text]) => text.trim()).join('\n'))
+  }
+  return pages.join('\n\n').trim()
+}
+
 export default function Tailor() {
   const [cv, setCv] = useState('')
   const [jd, setJd] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [pdfLoading, setPdfLoading] = useState(false)
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState('cv')
+
+  async function handleCVFile(file) {
+    if (!file) return
+    if (file.type !== 'application/pdf') {
+      setError('Please upload a PDF file.')
+      return
+    }
+    setError(null)
+    setPdfLoading(true)
+    try {
+      const text = await extractTextFromPDF(file)
+      if (!text) throw new Error('empty')
+      setCv(text)
+    } catch {
+      setError('Could not read the PDF. Try copying and pasting your CV text instead.')
+    } finally {
+      setPdfLoading(false)
+    }
+  }
 
   async function handleTailor() {
     if (!cv.trim() || !jd.trim()) {
@@ -124,11 +165,14 @@ export default function Tailor() {
           <div className="inputGrid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
             <InputCard
               label="Your Current CV"
-              placeholder={"Paste your CV or resume here...\n\nTip: Include your full work history, skills, education, and any other relevant sections. The more detail you provide, the better the tailoring."}
-              value={cv}
+              placeholder={"Paste your CV or resume here, or drag & drop a PDF file...\n\nTip: Include your full work history, skills, education, and any other relevant sections."}
+              value={pdfLoading ? '' : cv}
               onChange={e => setCv(e.target.value)}
               charCount={cv.length}
               icon="📋"
+              acceptPDF
+              onFileSelect={handleCVFile}
+              pdfLoading={pdfLoading}
             />
             <InputCard
               label="Job Description"
@@ -301,19 +345,89 @@ export default function Tailor() {
   )
 }
 
-function InputCard({ label, placeholder, value, onChange, charCount, icon, exampleClick }) {
+function InputCard({ label, placeholder, value, onChange, charCount, icon, exampleClick, acceptPDF, onFileSelect, pdfLoading }) {
+  const [dragging, setDragging] = useState(false)
+  const fileInputRef = useRef(null)
+
+  function handleDragEnter(e) {
+    if (!acceptPDF) return
+    e.preventDefault()
+    setDragging(true)
+  }
+  function handleDragLeave(e) {
+    if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false)
+  }
+  function handleDragOver(e) {
+    if (!acceptPDF) return
+    e.preventDefault()
+  }
+  function handleDrop(e) {
+    if (!acceptPDF) return
+    e.preventDefault()
+    setDragging(false)
+    const file = e.dataTransfer.files[0]
+    if (file && onFileSelect) onFileSelect(file)
+  }
+
   return (
-    <div style={{
-      background: 'white', borderRadius: 16, border: '1px solid #e8e8f0',
-      overflow: 'hidden', display: 'flex', flexDirection: 'column',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-    }}>
+    <div
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      style={{
+        background: 'white', borderRadius: 16,
+        border: dragging ? '2px dashed #764ba2' : '1px solid #e8e8f0',
+        overflow: 'hidden', display: 'flex', flexDirection: 'column',
+        boxShadow: dragging ? '0 0 0 4px rgba(118,75,162,0.12)' : '0 2px 12px rgba(0,0,0,0.04)',
+        transition: 'border 0.15s, box-shadow 0.15s',
+        position: 'relative',
+      }}
+    >
+      {/* Drag overlay */}
+      {dragging && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 10,
+          background: 'rgba(118,75,162,0.05)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none', borderRadius: 16,
+        }}>
+          <div style={{
+            background: 'white', borderRadius: 16, padding: '20px 32px',
+            border: '2px dashed #764ba2', textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(118,75,162,0.15)',
+          }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>📄</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#764ba2' }}>Drop your PDF here</div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <div style={{ padding: '16px 20px', borderBottom: '1px solid #f0f0f5', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 18 }}>{icon}</span>
           <span style={{ fontWeight: 700, fontSize: 15, color: '#1a1a2e' }}>{label}</span>
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {acceptPDF && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                style={{ display: 'none' }}
+                onChange={e => { if (onFileSelect) onFileSelect(e.target.files[0]); e.target.value = '' }}
+              />
+              <button onClick={() => fileInputRef.current?.click()} style={{
+                fontSize: 12, fontWeight: 600, color: '#764ba2',
+                background: '#764ba215', border: 'none', borderRadius: 20,
+                padding: '4px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
+              }}>
+                📎 Upload PDF
+              </button>
+            </>
+          )}
           {exampleClick && (
             <button onClick={exampleClick} style={{
               fontSize: 12, fontWeight: 600, color: '#764ba2',
@@ -326,16 +440,25 @@ function InputCard({ label, placeholder, value, onChange, charCount, icon, examp
           <span style={{ fontSize: 12, color: '#aaa' }}>{charCount.toLocaleString()} chars</span>
         </div>
       </div>
-      <textarea
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        style={{
-          flex: 1, border: 'none', padding: '20px', fontSize: 14,
-          lineHeight: 1.65, color: '#333', resize: 'none', minHeight: 340,
-          fontFamily: 'inherit', background: 'white',
-        }}
-      />
+
+      {/* PDF loading state */}
+      {pdfLoading ? (
+        <div style={{ flex: 1, minHeight: 340, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 14, color: '#764ba2' }}>
+          <span style={{ width: 28, height: 28, border: '3px solid #e0d4f7', borderTop: '3px solid #764ba2', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.8s linear infinite' }} />
+          <span style={{ fontSize: 14, fontWeight: 600 }}>Reading PDF…</span>
+        </div>
+      ) : (
+        <textarea
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          style={{
+            flex: 1, border: 'none', padding: '20px', fontSize: 14,
+            lineHeight: 1.65, color: '#333', resize: 'none', minHeight: 340,
+            fontFamily: 'inherit', background: 'white',
+          }}
+        />
+      )}
     </div>
   )
 }
