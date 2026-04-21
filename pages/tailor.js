@@ -107,86 +107,161 @@ export default function Tailor() {
   async function handleDownload() {
     if (!result?.tailoredCV) return
     const { jsPDF } = await import('jspdf')
-    const doc = new jsPDF('p', 'mm', 'a4')
 
-    const marginX = 20
-    const marginY = 24
-    const contentW = 170
-    const pageH = 297
-    let y = marginY
+    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
+    const PW = 210, PH = 297
+    const ML = 20, MR = 20, MT = 22, MB = 18
+    const CW = PW - ML - MR
 
-    function nextPage() { doc.addPage(); y = marginY }
+    // Brand colours
+    const C_NAME    = [22, 22, 40]
+    const C_ACCENT  = [102, 126, 234]
+    const C_DARK    = [35, 35, 50]
+    const C_MID     = [90, 90, 110]
+    const C_LIGHT   = [150, 150, 165]
+    const C_RULE    = [220, 220, 230]
 
-    function write(text, size, style, color, indent = 0) {
-      doc.setFontSize(size)
-      doc.setFont('helvetica', style)
-      doc.setTextColor(...color)
-      const wrapped = doc.splitTextToSize(text, contentW - indent)
-      const lineH = size * 0.38
-      if (y + wrapped.length * lineH > pageH - 16) nextPage()
-      doc.text(wrapped, marginX + indent, y)
-      y += wrapped.length * lineH
+    let y = MT
+    const lineHeightFactor = 1.35
+
+    function lh(size) { return size * 0.3528 * lineHeightFactor }
+
+    function need(mm) {
+      if (y + mm > PH - MB) { doc.addPage(); y = MT }
     }
 
-    const lines = result.tailoredCV.split('\n')
-    let firstLine = true
+    function text(str, x, fontSize, style, color, maxW) {
+      doc.setFont('helvetica', style)
+      doc.setFontSize(fontSize)
+      doc.setTextColor(...color)
+      const w = maxW || CW
+      const lines = doc.splitTextToSize(str, w)
+      need(lines.length * lh(fontSize) + 1)
+      doc.text(lines, x, y)
+      return lines.length * lh(fontSize)
+    }
 
-    for (const raw of lines) {
+    function rule(color = C_RULE, width = 0.25) {
+      doc.setDrawColor(...color)
+      doc.setLineWidth(width)
+      doc.line(ML, y, PW - MR, y)
+    }
+
+    const rawLines = result.tailoredCV.split('\n')
+    let idx = 0
+
+    // ── NAME block ─────────────────────────────────────
+    while (idx < rawLines.length && !rawLines[idx].trim()) idx++
+    const nameLine = rawLines[idx]?.trim() || ''
+    if (nameLine) {
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(24)
+      doc.setTextColor(...C_NAME)
+      doc.text(nameLine, ML, y)
+      y += lh(24) + 1
+      idx++
+    }
+
+    // ── Contact lines (until first blank line or section header) ──
+    const contactLines = []
+    while (idx < rawLines.length) {
+      const l = rawLines[idx].trim()
+      if (!l) { idx++; break }
+      if (/^[A-Z][A-Z\s&\/\(\)\-]{3,}$/.test(l)) break
+      contactLines.push(l)
+      idx++
+    }
+    if (contactLines.length) {
+      // Join short contact fields with  |  separator for ATS-friendly single line
+      const joined = contactLines.join('  |  ')
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8.5)
+      doc.setTextColor(...C_MID)
+      const wrapped = doc.splitTextToSize(joined, CW)
+      doc.text(wrapped, ML, y)
+      y += wrapped.length * lh(8.5) + 3
+    }
+
+    // Thick accent rule under header block
+    doc.setDrawColor(...C_ACCENT)
+    doc.setLineWidth(0.6)
+    doc.line(ML, y, PW - MR, y)
+    y += 6
+
+    // ── Body lines ─────────────────────────────────────
+    while (idx < rawLines.length) {
+      const raw = rawLines[idx]
       const line = raw.trim()
+      idx++
 
-      if (!line) { y += 3; continue }
+      if (!line) { y += 2.5; continue }
 
-      // Name — first non-empty line
-      if (firstLine) {
-        write(line, 20, 'bold', [30, 30, 30])
-        y += 2
-        firstLine = false
+      // Section header: ALL CAPS (allow spaces, &, /)
+      if (/^[A-Z][A-Z\s&\/\(\)\-]{2,}$/.test(line) && line.length < 50) {
+        y += 3
+        need(12)
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(9)
+        doc.setTextColor(...C_ACCENT)
+        doc.text(line.toUpperCase(), ML, y)
+        y += lh(9) + 1
+        rule(C_RULE, 0.2)
+        y += 3
         continue
       }
 
-      // Contact info — contains @ or + or common separators on short lines
-      if (line.length < 100 && (line.includes('@') || line.match(/\+\d/) || line.match(/^\s*(Phone|E.?mail|Address|Nationality|Date)/i))) {
-        write(line, 9.5, 'normal', [100, 100, 100])
-        y += 1
+      // Date range — right-align lines that are purely dates/locations
+      if (/^\d{4}/.test(line) || /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{2}\/\d{2})/i.test(line)) {
+        need(lh(9) + 1)
+        doc.setFont('helvetica', 'italic')
+        doc.setFontSize(9)
+        doc.setTextColor(...C_LIGHT)
+        doc.text(line, PW - MR, y, { align: 'right' })
+        y += lh(9) + 1
         continue
       }
 
-      // Section header — all caps with optional spaces/slashes
-      if (/^[A-Z][A-Z\s&\/\-]{2,}$/.test(line)) {
-        y += 5
-        write(line, 10.5, 'bold', [102, 126, 234])
-        doc.setDrawColor(180, 180, 220)
-        doc.setLineWidth(0.3)
-        doc.line(marginX, y + 0.5, 190, y + 0.5)
-        y += 4
-        continue
-      }
-
-      // Job title / institution lines — bold, no bullet, not header
-      if (!line.startsWith('•') && !line.startsWith('-') && !line.startsWith('·') && !line.startsWith('□') && line.length < 80 && /^[A-Z]/.test(line) && !line.endsWith('.')) {
-        write(line, 10, 'bold', [40, 40, 40])
-        y += 1
-        continue
-      }
-
-      // Bullet points
-      if (line.startsWith('•') || line.startsWith('-') || line.startsWith('·') || line.startsWith('□')) {
-        const text = line.replace(/^[•\-·□]\s*/, '')
-        doc.setFontSize(9.5)
+      // Bullet point
+      if (/^[•\-·–\*□]/.test(line)) {
+        const content = line.replace(/^[•\-·–\*□]\s*/, '')
         doc.setFont('helvetica', 'normal')
-        doc.setTextColor(60, 60, 60)
-        const wrapped = doc.splitTextToSize(text, contentW - 6)
-        const lineH = 9.5 * 0.38
-        if (y + wrapped.length * lineH > pageH - 16) nextPage()
-        doc.text('•', marginX, y)
-        doc.text(wrapped, marginX + 5, y)
-        y += wrapped.length * lineH + 1
+        doc.setFontSize(9.5)
+        doc.setTextColor(...C_DARK)
+        const wrapped = doc.splitTextToSize(content, CW - 7)
+        need(wrapped.length * lh(9.5) + 1)
+        doc.setTextColor(...C_ACCENT)
+        doc.text('-', ML + 1, y)
+        doc.setTextColor(...C_DARK)
+        doc.text(wrapped, ML + 6, y)
+        y += wrapped.length * lh(9.5) + 1
         continue
       }
 
-      // Regular text
-      write(line, 9.5, 'normal', [60, 60, 60])
-      y += 0.5
+      // Bold line: short, starts uppercase, no period at end — job title / company / degree
+      if (line.length < 90 && /^[A-Z]/.test(line) && !line.endsWith('.') && !line.includes('@')) {
+        need(lh(10.5) + 1)
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(10.5)
+        doc.setTextColor(...C_DARK)
+        doc.text(doc.splitTextToSize(line, CW), ML, y)
+        y += lh(10.5) + 1
+        continue
+      }
+
+      // Normal paragraph
+      need(lh(9.5))
+      const h = text(line, ML, 9.5, 'normal', C_DARK)
+      y += h + 1
+    }
+
+    // ── Page numbers ───────────────────────────────────
+    const total = doc.getNumberOfPages()
+    for (let p = 1; p <= total; p++) {
+      doc.setPage(p)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(7.5)
+      doc.setTextColor(...C_LIGHT)
+      doc.text(`${p} / ${total}`, PW / 2, PH - 8, { align: 'center' })
     }
 
     doc.save('tailored-cv.pdf')
