@@ -1,6 +1,22 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useRef } from 'react'
+import { track } from '@vercel/analytics'
+
+// Bucket lengths to avoid sending raw CV/JD size as a continuous value
+function lengthBucket(text) {
+  const n = (text || '').length
+  if (n < 1000) return 'small'
+  if (n < 3000) return 'medium'
+  if (n < 6000) return 'large'
+  return 'xlarge'
+}
+
+function scoreBucket(score) {
+  if (score >= 80) return 'high'
+  if (score >= 60) return 'mid'
+  return 'low'
+}
 
 const EXAMPLE_JD = `Senior Software Engineer — FinTech (Remote)
 
@@ -49,6 +65,7 @@ export default function Tailor() {
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState('cv')
+  const [feedbackVote, setFeedbackVote] = useState(null) // null | 'up' | 'down'
 
   async function handleCVFile(file) {
     if (!file) return
@@ -76,7 +93,13 @@ export default function Tailor() {
     }
     setError(null)
     setResult(null)
+    setFeedbackVote(null)
     setLoading(true)
+    const startedAt = Date.now()
+    track('tailor_started', {
+      cvLength: lengthBucket(cv),
+      jdLength: lengthBucket(jd),
+    })
     try {
       const res = await fetch('/api/tailor', {
         method: 'POST',
@@ -90,11 +113,34 @@ export default function Tailor() {
       const data = await res.json()
       setResult(data)
       setActiveTab('cv')
+      track('tailor_succeeded', {
+        cvLength: lengthBucket(cv),
+        jdLength: lengthBucket(jd),
+        matchScore: typeof data.matchScore === 'number' ? data.matchScore : 0,
+        scoreBucket: scoreBucket(data.matchScore || 0),
+        durationMs: Date.now() - startedAt,
+      })
     } catch (e) {
       setError(e.message)
+      track('tailor_failed', {
+        cvLength: lengthBucket(cv),
+        jdLength: lengthBucket(jd),
+        // Truncate to keep events tidy and avoid leaking details
+        reason: String(e.message || 'unknown').slice(0, 80),
+      })
     } finally {
       setLoading(false)
     }
+  }
+
+  function handleFeedback(verdict) {
+    if (feedbackVote) return // one vote per result
+    setFeedbackVote(verdict)
+    track('feedback_submitted', {
+      verdict,
+      matchScore: typeof result?.matchScore === 'number' ? result.matchScore : 0,
+      scoreBucket: scoreBucket(result?.matchScore || 0),
+    })
   }
 
   function handleCopy() {
@@ -102,6 +148,9 @@ export default function Tailor() {
     navigator.clipboard.writeText(result.tailoredCV)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+    track('cv_copied', {
+      scoreBucket: scoreBucket(result?.matchScore || 0),
+    })
   }
 
   async function handleDownload() {
@@ -265,6 +314,9 @@ export default function Tailor() {
     }
 
     doc.save('tailored-cv.pdf')
+    track('cv_downloaded', {
+      scoreBucket: scoreBucket(result?.matchScore || 0),
+    })
   }
 
   const score = result?.matchScore ?? 0
@@ -472,6 +524,49 @@ export default function Tailor() {
                       ))}
                     </ul>
                   </div>
+                )}
+              </div>
+
+              {/* Feedback widget */}
+              <div style={{
+                borderTop: '1px solid #eee', background: '#fafafa',
+                padding: '18px 28px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', gap: 14, flexWrap: 'wrap',
+              }}>
+                {feedbackVote ? (
+                  <div style={{ fontSize: 14, color: '#555' }}>
+                    {feedbackVote === 'up' ? '🙏 Thanks for the feedback!' : '🙏 Thanks — we\'ll keep improving.'}
+                  </div>
+                ) : (
+                  <>
+                    <span style={{ fontSize: 14, color: '#555', fontWeight: 600 }}>Was this helpful?</span>
+                    <button
+                      onClick={() => handleFeedback('up')}
+                      aria-label="Helpful"
+                      style={{
+                        background: 'white', border: '1px solid #ddd', borderRadius: 20,
+                        padding: '8px 18px', fontSize: 14, cursor: 'pointer', fontWeight: 600,
+                        color: '#333', transition: 'all 0.15s',
+                      }}
+                      onMouseOver={e => { e.currentTarget.style.background = '#f0fdf4'; e.currentTarget.style.borderColor = '#4ade80' }}
+                      onMouseOut={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#ddd' }}
+                    >
+                      👍 Yes
+                    </button>
+                    <button
+                      onClick={() => handleFeedback('down')}
+                      aria-label="Not helpful"
+                      style={{
+                        background: 'white', border: '1px solid #ddd', borderRadius: 20,
+                        padding: '8px 18px', fontSize: 14, cursor: 'pointer', fontWeight: 600,
+                        color: '#333', transition: 'all 0.15s',
+                      }}
+                      onMouseOver={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.borderColor = '#f87171' }}
+                      onMouseOut={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#ddd' }}
+                    >
+                      👎 No
+                    </button>
+                  </>
                 )}
               </div>
             </div>
