@@ -1,7 +1,10 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useRef } from 'react'
-import { track } from '@vercel/analytics'
+import posthog from 'posthog-js'
+
+// Thin wrapper so the rest of the file stays identical
+const track = (name, props) => posthog?.capture?.(name, props)
 
 // Bucket lengths to avoid sending raw CV/JD size as a continuous value
 function lengthBucket(text) {
