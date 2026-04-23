@@ -14,13 +14,19 @@ export default function Pricing() {
     setStatus('sending')
     setErrorMsg('')
     try {
-      const res = await fetch('/api/feedback', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, message }),
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY,
+          subject: 'cv2jd — New Feedback',
+          name: name?.trim() || 'Anonymous',
+          message: message.trim(),
+          from_name: 'cv2jd Feedback',
+        }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Something went wrong.')
+      if (!data.success) throw new Error(data.message || 'Could not send feedback.')
       setStatus('sent')
     } catch (err) {
       setStatus('error')
