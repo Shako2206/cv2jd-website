@@ -26,9 +26,20 @@ export default async function handler(req, res) {
       }),
     })
 
+    if (response.status === 403) {
+      console.error('Feedback error: Web3Forms returned 403 — check WEB3FORMS_KEY in Vercel environment variables.')
+      return res.status(502).json({ error: 'Feedback service misconfigured. Please contact support.' })
+    }
+
+    if (!response.ok) {
+      console.error('Feedback error: Web3Forms returned', response.status)
+      return res.status(502).json({ error: 'Could not reach feedback service. Please try again.' })
+    }
+
     const data = await response.json()
 
     if (!data.success) {
+      console.error('Feedback error: Web3Forms success=false', data)
       return res.status(502).json({ error: 'Could not send feedback. Please try again.' })
     }
 
