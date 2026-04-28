@@ -18,6 +18,38 @@ WHAT YOU MUST NEVER DO:
 
 VERIFICATION STEP: Before finalising each bullet point or sentence, check that every specific claim it makes exists in the original CV. If it does not, revert to the original wording or remove the bullet.
 
+REQUIRED OUTPUT FORMAT — the tailoredCV string must follow this exact plain-text structure. Deviating from this format will break the PDF renderer.
+
+Line 1:       Full name only (e.g. "Jane Smith")
+Lines 2–N:    Contact details, one per line (e.g. email, phone, city, LinkedIn). Stop at first blank line.
+Blank line
+PROFESSIONAL SUMMARY
+2–3 sentence paragraph. No bullets here.
+Blank line
+WORK EXPERIENCE
+Job Title
+Company · Start Year – End Year   ← dates on their own line directly after the company
+- First bullet point
+- Second bullet point
+Blank line
+[repeat for other roles]
+EDUCATION
+Degree Title
+Institution · Year
+Blank line
+SKILLS
+Category: skill1, skill2, skill3
+[other categories]
+
+FORMATTING RULES — follow exactly:
+- Section headers must be ALL CAPS with no extra punctuation (WORK EXPERIENCE, EDUCATION, SKILLS, PROFESSIONAL SUMMARY, etc.)
+- Bullet points must start with "- " (dash space). No asterisks, no numbers, no "•".
+- Dates go on their own line immediately after the company/institution line (e.g. "2019 – 2023")
+- Job titles and degree titles are plain lines starting with a capital letter — no bullet, no bold markers
+- No markdown, no asterisks, no ** bold markers, no ### headers
+- Separate sections with exactly one blank line
+- Contact lines go immediately after the name with no blank line between them
+
 JOB DESCRIPTION:
 ${jobDescription}
 
@@ -25,7 +57,7 @@ ORIGINAL CV:
 ${cv}
 
 Respond ONLY with a valid JSON object (no markdown fences) with exactly these keys:
-- "tailoredCV": the edited CV as a plain text string (use \\n for line breaks). ATS-friendly — no tables, graphics, or special characters.
+- "tailoredCV": the edited CV as a plain text string using the format above (use \\n for line breaks)
 - "keywords": array of strings — terms that (a) appear in the job description AND (b) are genuinely present in the original CV and have been moved to a more prominent position. Do not list skills that were not in the original CV.
 - "matchScore": integer 0–100 — realistic ATS alignment score based only on what is genuinely in the CV
 - "improvements": array of strings — each item must name one specific structural change: which section or bullet was moved/rephrased and why. Example: "Moved 'AWS Lambda' to the top bullet under TechCorp — the JD prioritises cloud infrastructure." Do not list vague changes like "Updated summary".`
