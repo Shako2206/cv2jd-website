@@ -1,6 +1,11 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
 
 export default function Pricing() {
   const [name, setName] = useState('')
@@ -44,163 +49,124 @@ export default function Pricing() {
       </Head>
 
       {/* NAV */}
-      <nav style={{
-        position: 'fixed', top: 0, width: '100%', zIndex: 1000,
-        background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(0,0,0,0.08)',
-      }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 13, fontWeight: 800,
-            }}>cv</div>
-            <span style={{ fontSize: 22, fontWeight: 800, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+      <nav className="fixed top-0 w-full z-[1000] bg-white/[0.92] backdrop-blur-md border-b border-black/[0.08]">
+        <div className="max-w-[1200px] mx-auto px-8 h-[68px] flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div
+              className="w-9 h-9 rounded-[10px] flex items-center justify-center text-white text-[13px] font-extrabold"
+              style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+            >cv</div>
+            <span className="text-[22px] font-extrabold bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
               cv2jd
             </span>
           </Link>
-          <Link href="/tailor" style={{
-            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-            color: 'white', padding: '10px 24px', borderRadius: 50,
-            fontSize: 15, fontWeight: 600,
-          }}>Try it free</Link>
+          <Button asChild className="text-[15px]">
+            <Link href="/tailor">Try it free</Link>
+          </Button>
         </div>
       </nav>
 
       {/* MAIN */}
-      <main style={{ minHeight: '100vh', paddingTop: 68, background: 'linear-gradient(180deg, #f8f8fc 0%, #ffffff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 2rem' }}>
-        <div style={{ maxWidth: 600, width: '100%', textAlign: 'center' }}>
+      <main className="min-h-screen pt-[68px] flex items-center justify-center px-8 py-20 bg-gradient-to-b from-[#f8f8fc] to-white">
+        <div className="max-w-[600px] w-full text-center">
+          <div className="text-[68px] mb-5">🎉</div>
 
-          <div style={{ fontSize: 68, marginBottom: 20 }}>🎉</div>
-
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: '#1a1a2e', marginBottom: 16, letterSpacing: '-1px', lineHeight: 1.1 }}>
+          <h1
+            className="font-black text-[#1a1a2e] mb-4 tracking-tight leading-[1.1]"
+            style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+          >
             It&apos;s completely free.<br />
-            <span style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span className="bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
               No catch. No card. No plan.
             </span>
           </h1>
 
-          <p style={{ fontSize: '1.1rem', color: '#666', lineHeight: 1.7, marginBottom: 48 }}>
+          <p className="text-[1.1rem] text-[#666] leading-[1.7] mb-12">
             No subscriptions, no free trial that expires, no hidden fees.<br />
             Just paste your CV and job description — done.
           </p>
 
-          {/* Feedback card */}
-          <div style={{
-            background: 'white', borderRadius: 24, padding: '40px',
-            border: '1px solid #e8e8f0', boxShadow: '0 8px 40px rgba(118,75,162,0.08)',
-            textAlign: 'left',
-          }}>
-            <div style={{ textAlign: 'center', marginBottom: 28 }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>💬</div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1a1a2e', marginBottom: 10 }}>
-                The only thing we ask
-              </h2>
-              <p style={{ color: '#777', fontSize: '0.98rem', lineHeight: 1.65 }}>
-                Your honest feedback — good, bad, or ugly. Did it help? Feel too robotic?
-                Miss the mark? Anything at all makes this better for everyone.
-              </p>
-            </div>
-
-            {status === 'sent' ? (
-              <div style={{
-                background: 'linear-gradient(135deg, #667eea10, #764ba215)',
-                border: '1px solid #764ba230', borderRadius: 16,
-                padding: '32px', textAlign: 'center',
-              }}>
-                <div style={{ fontSize: 44, marginBottom: 12 }}>🙏</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#764ba2', marginBottom: 8 }}>Thank you so much!</div>
-                <div style={{ color: '#666', fontSize: '0.95rem' }}>Your feedback means a lot and helps make cv2jd better for everyone.</div>
+          <Card className="border-[#e8e8f0] shadow-[0_8px_40px_rgba(118,75,162,0.08)] text-left">
+            <CardContent className="p-10">
+              <div className="text-center mb-7">
+                <div className="text-[40px] mb-3">💬</div>
+                <h2 className="text-2xl font-extrabold text-[#1a1a2e] mb-2.5">The only thing we ask</h2>
+                <p className="text-[#777] text-[0.98rem] leading-[1.65]">
+                  Your honest feedback — good, bad, or ugly. Did it help? Feel too robotic?
+                  Miss the mark? Anything at all makes this better for everyone.
+                </p>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#555', marginBottom: 6 }}>
-                    Your name <span style={{ color: '#aaa', fontWeight: 400 }}>(optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="e.g. Sarah"
-                    style={{
-                      width: '100%', padding: '12px 16px', borderRadius: 12,
-                      border: '1px solid #e0e0ee', fontSize: 15, color: '#333',
-                      outline: 'none', boxSizing: 'border-box',
-                      fontFamily: 'inherit', background: '#fafafa',
-                    }}
-                  />
-                </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#555', marginBottom: 6 }}>
-                    Your feedback <span style={{ color: '#e53e3e' }}>*</span>
-                  </label>
-                  <textarea
-                    value={message}
-                    onChange={e => setMessage(e.target.value)}
-                    placeholder="Tell us anything — what worked, what didn't, what you'd love to see next..."
-                    required
-                    rows={5}
-                    style={{
-                      width: '100%', padding: '12px 16px', borderRadius: 12,
-                      border: '1px solid #e0e0ee', fontSize: 15, color: '#333',
-                      outline: 'none', resize: 'vertical', boxSizing: 'border-box',
-                      fontFamily: 'inherit', background: '#fafafa', lineHeight: 1.6,
-                    }}
-                  />
-                </div>
-
-                {status === 'error' && (
-                  <div style={{ background: '#fff1f1', border: '1px solid #fecaca', borderRadius: 10, padding: '12px 16px', color: '#dc2626', fontSize: 14 }}>
-                    ⚠️ {errorMsg}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={status === 'sending' || !message.trim()}
-                  style={{
-                    background: status === 'sending' || !message.trim()
-                      ? '#c4b5fd'
-                      : 'linear-gradient(135deg, #667eea, #764ba2)',
-                    color: 'white', border: 'none', padding: '14px 32px',
-                    borderRadius: 50, fontSize: 16, fontWeight: 700,
-                    cursor: status === 'sending' || !message.trim() ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', gap: 10,
-                  }}
+              {status === 'sent' ? (
+                <div
+                  className="rounded-2xl p-8 text-center border"
+                  style={{ background: 'linear-gradient(135deg, #667eea10, #764ba215)', borderColor: '#764ba230' }}
                 >
-                  {status === 'sending' ? (
-                    <>
-                      <span style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.4)', borderTop: '2px solid white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.8s linear infinite' }} />
-                      Sending…
-                    </>
-                  ) : 'Send feedback →'}
-                </button>
-              </form>
-            )}
-          </div>
+                  <div className="text-[44px] mb-3">🙏</div>
+                  <div className="text-[1.2rem] font-bold text-[#764ba2] mb-2">Thank you so much!</div>
+                  <div className="text-[#666] text-[0.95rem]">Your feedback means a lot and helps make cv2jd better for everyone.</div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="name">
+                      Your name <span className="text-[#aaa] font-normal">(optional)</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="e.g. Sarah"
+                    />
+                  </div>
 
-          <div style={{ marginTop: 40 }}>
-            <p style={{ color: '#aaa', fontSize: 14, marginBottom: 16 }}>Ready to tailor your CV?</p>
-            <Link href="/tailor" style={{
-              display: 'inline-block', border: '2px solid #764ba2',
-              color: '#764ba2', padding: '12px 32px', borderRadius: 50,
-              fontSize: 15, fontWeight: 700,
-            }}>
-              ✨ Start Tailoring — It&apos;s Free
-            </Link>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="message">
+                      Your feedback <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="message"
+                      value={message}
+                      onChange={e => setMessage(e.target.value)}
+                      placeholder="Tell us anything — what worked, what didn't, what you'd love to see next..."
+                      required
+                      rows={5}
+                      className="min-h-[120px]"
+                    />
+                  </div>
+
+                  {status === 'error' && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm">
+                      ⚠️ {errorMsg}
+                    </div>
+                  )}
+
+                  <Button
+                    type="submit"
+                    disabled={status === 'sending' || !message.trim()}
+                    className="h-12 text-base font-bold gap-2.5"
+                  >
+                    {status === 'sending' ? (
+                      <>
+                        <span className="w-[18px] h-[18px] border-2 border-white/40 border-t-white rounded-full inline-block animate-spin" />
+                        Sending…
+                      </>
+                    ) : 'Send feedback →'}
+                  </Button>
+                </form>
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="mt-10">
+            <p className="text-[#aaa] text-sm mb-4">Ready to tailor your CV?</p>
+            <Button asChild variant="outline" className="h-12 px-8 text-[15px] font-bold">
+              <Link href="/tailor">✨ Start Tailoring — It&apos;s Free</Link>
+            </Button>
           </div>
         </div>
       </main>
-
-      <style jsx global>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        input:focus, textarea:focus { border-color: #764ba2 !important; box-shadow: 0 0 0 3px rgba(118,75,162,0.1) !important; }
-      `}</style>
     </>
   )
 }

@@ -1,37 +1,16 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const features = [
-  {
-    icon: '🎯',
-    title: 'ATS-Optimised',
-    desc: 'Our AI ensures your CV passes Applicant Tracking Systems by incorporating the right keywords and formatting.',
-  },
-  {
-    icon: '⚡',
-    title: 'Instant Results',
-    desc: 'Get a fully tailored, professional CV in seconds — not hours. Spend your time applying, not editing.',
-  },
-  {
-    icon: '🔍',
-    title: 'Job Description Analysis',
-    desc: 'We deeply analyse every job posting to extract skills, requirements, and keywords that matter most.',
-  },
-  {
-    icon: '📈',
-    title: 'Match Score',
-    desc: 'See exactly how well your tailored CV aligns with the job description before you hit submit.',
-  },
-  {
-    icon: '✏️',
-    title: 'Smart Rewriting',
-    desc: 'Your achievements are reframed using the language of the specific role — without inventing anything.',
-  },
-  {
-    icon: '📄',
-    title: 'Clean Export',
-    desc: 'Download or copy your tailored CV ready to paste into any application form or PDF generator.',
-  },
+  { icon: '🎯', title: 'ATS-Optimised', desc: 'Our AI ensures your CV passes Applicant Tracking Systems by incorporating the right keywords and formatting.' },
+  { icon: '⚡', title: 'Instant Results', desc: 'Get a fully tailored, professional CV in seconds — not hours. Spend your time applying, not editing.' },
+  { icon: '🔍', title: 'Job Description Analysis', desc: 'We deeply analyse every job posting to extract skills, requirements, and keywords that matter most.' },
+  { icon: '📈', title: 'Match Score', desc: 'See exactly how well your tailored CV aligns with the job description before you hit submit.' },
+  { icon: '✏️', title: 'Smart Rewriting', desc: 'Your achievements are reframed using the language of the specific role — without inventing anything.' },
+  { icon: '📄', title: 'Clean Export', desc: 'Download or copy your tailored CV ready to paste into any application form or PDF generator.' },
 ]
 
 const steps = [
@@ -50,152 +29,115 @@ export default function Home() {
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>" />
       </Head>
 
-      {/* ── NAV ── */}
-      <nav style={{
-        position: 'fixed', top: 0, width: '100%', zIndex: 1000,
-        background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(0,0,0,0.08)',
-      }}>
-        <div className="navInner" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 13, fontWeight: 800, letterSpacing: '-0.5px',
-            }}>cv</div>
-            <span style={{ fontSize: 22, fontWeight: 800, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+      {/* NAV */}
+      <nav className="fixed top-0 w-full z-[1000] bg-white/[0.92] backdrop-blur-md border-b border-black/[0.08]">
+        <div className="max-w-[1200px] mx-auto px-8 h-[68px] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-9 h-9 rounded-[10px] flex items-center justify-center text-white text-[13px] font-extrabold tracking-tight"
+              style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+            >cv</div>
+            <span className="text-[22px] font-extrabold bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
               cv2jd
             </span>
           </div>
 
-          <div className="navLinks" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+          <div className="hidden md:flex gap-7 items-center">
             {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['/pricing', 'Pricing']].map(([href, label]) => (
-              <a key={href} href={href} style={{ color: '#555', fontSize: 15, fontWeight: 500, transition: 'color 0.2s' }}
-                onMouseEnter={e => e.target.style.color = '#764ba2'}
-                onMouseLeave={e => e.target.style.color = '#555'}>{label}</a>
+              <a key={href} href={href} className="text-[#555] text-[15px] font-medium hover:text-[#764ba2] transition-colors">
+                {label}
+              </a>
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <Link href="/tailor" className="navLogin" style={{ color: '#555', fontSize: 15, fontWeight: 500 }}>Log in</Link>
-            <Link href="/tailor" style={{
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              color: 'white', padding: '10px 24px', borderRadius: 50,
-              fontSize: 15, fontWeight: 600,
-            }}>Sign up free</Link>
+          <div className="flex gap-3 items-center">
+            <Link href="/tailor" className="hidden md:inline text-[#555] text-[15px] font-medium hover:text-[#764ba2] transition-colors">
+              Log in
+            </Link>
+            <Button asChild className="text-[15px]">
+              <Link href="/tailor">Sign up free</Link>
+            </Button>
           </div>
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 45%, #c471ed 75%, #f64f59 100%)',
-        minHeight: '100vh', paddingTop: 68, position: 'relative', overflow: 'hidden',
-        display: 'flex', alignItems: 'center',
-      }}>
-        {/* decorative circles */}
-        {[
-          { size: 400, top: '-10%', right: '-5%', opacity: 0.08 },
-          { size: 250, bottom: '5%', left: '-3%', opacity: 0.06 },
-          { size: 150, top: '30%', left: '42%', opacity: 0.05 },
-        ].map((c, i) => (
-          <div key={i} style={{
-            position: 'absolute', width: c.size, height: c.size, borderRadius: '50%',
-            background: 'white', opacity: c.opacity,
-            top: c.top, bottom: c.bottom, left: c.left, right: c.right,
-            pointerEvents: 'none',
-          }} />
-        ))}
+      {/* HERO */}
+      <section
+        className="min-h-screen pt-[68px] relative overflow-hidden flex items-center"
+        style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 45%, #c471ed 75%, #f64f59 100%)' }}
+      >
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-white/[0.08] -top-[10%] -right-[5%] pointer-events-none" />
+        <div className="absolute w-[250px] h-[250px] rounded-full bg-white/[0.06] bottom-[5%] -left-[3%] pointer-events-none" />
+        <div className="absolute w-[150px] h-[150px] rounded-full bg-white/[0.05] top-[30%] left-[42%] pointer-events-none" />
 
-        <div className="heroGrid" style={{ maxWidth: 1200, margin: '0 auto', padding: '5rem 2rem 6rem', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
-          {/* Left */}
-          <div style={{ color: 'white' }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(255,255,255,0.18)', borderRadius: 50,
-              padding: '8px 18px', marginBottom: 28, fontSize: 14, fontWeight: 600,
-              border: '1px solid rgba(255,255,255,0.25)',
-            }}>
+        <div className="max-w-[1200px] mx-auto px-8 py-20 md:py-24 w-full grid grid-cols-1 md:grid-cols-2 gap-[60px] items-center">
+          <div className="text-white">
+            <div className="inline-flex items-center gap-2 bg-white/[0.18] rounded-full px-[18px] py-2 mb-7 text-sm font-semibold border border-white/25">
               ⭐ The #1 AI CV Tailoring Platform
             </div>
 
-            <h1 style={{ fontSize: 'clamp(2.6rem, 4.5vw, 4.2rem)', fontWeight: 900, lineHeight: 1.08, marginBottom: 24, letterSpacing: '-1px' }}>
+            <h1 className="font-black leading-[1.08] mb-6 tracking-tight" style={{ fontSize: 'clamp(2.6rem, 4.5vw, 4.2rem)' }}>
               Tailor Your CV<br />
               to Job Descriptions<br />
-              with <span style={{ color: '#fbbf24' }}>AI</span>
+              with <span className="text-[#fbbf24]">AI</span>
             </h1>
 
-            <p style={{ fontSize: '1.15rem', lineHeight: 1.65, opacity: 0.92, marginBottom: 40, maxWidth: 520 }}>
+            <p className="text-[1.15rem] leading-[1.65] opacity-[0.92] mb-10 max-w-[520px]">
               Our AI technology customises your CV to perfectly match each job description, creating ATS-friendly applications that highlight your most relevant skills and experience.
             </p>
 
-            <div className="heroCtas" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <Link href="/tailor" style={{
-                background: 'white', color: '#764ba2',
-                padding: '16px 36px', borderRadius: 50, fontSize: 16, fontWeight: 700,
-                boxShadow: '0 6px 24px rgba(0,0,0,0.18)',
-                transition: 'transform 0.15s, box-shadow 0.15s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(0,0,0,0.22)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.18)' }}>
-                Start Tailoring Your CV →
-              </Link>
-              <a href="#how-it-works" style={{
-                background: 'rgba(255,255,255,0.15)', color: 'white',
-                padding: '16px 36px', borderRadius: 50, fontSize: 16, fontWeight: 600,
-                border: '2px solid rgba(255,255,255,0.4)',
-              }}>
+            <div className="flex flex-col sm:flex-row gap-3.5">
+              <Button
+                asChild
+                className="h-14 px-9 text-base bg-white text-[#764ba2] hover:bg-white/90 shadow-[0_6px_24px_rgba(0,0,0,0.18)] hover:shadow-[0_10px_32px_rgba(0,0,0,0.22)] font-bold"
+              >
+                <Link href="/tailor">Start Tailoring Your CV →</Link>
+              </Button>
+              <a
+                href="#how-it-works"
+                className="h-14 flex items-center justify-center px-9 bg-white/15 text-white border-2 border-white/40 rounded-full text-base font-semibold hover:bg-white/20 transition-colors"
+              >
                 See How It Works
               </a>
             </div>
           </div>
 
-          {/* Right — mock CV card */}
-          <div className="heroCard" style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{
-              background: 'white', borderRadius: 20, padding: 28,
-              boxShadow: '0 24px 80px rgba(0,0,0,0.3)', width: '100%', maxWidth: 440,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-                <div style={{
-                  width: 52, height: 52, borderRadius: 26,
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', fontSize: 18, fontWeight: 800,
-                }}>JD</div>
+          <div className="hidden md:flex justify-center">
+            <div className="bg-white rounded-[20px] p-7 shadow-[0_24px_80px_rgba(0,0,0,0.3)] w-full max-w-[440px]">
+              <div className="flex items-center gap-3.5 mb-[18px]">
+                <div
+                  className="w-[52px] h-[52px] rounded-full flex items-center justify-center text-white text-lg font-extrabold flex-shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+                >JD</div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 17, color: '#1a1a2e' }}>John Doe</div>
-                  <div style={{ fontSize: 13, color: '#888' }}>john.doe@email.com · London, UK</div>
+                  <div className="font-bold text-[17px] text-[#1a1a2e]">John Doe</div>
+                  <div className="text-[13px] text-[#888]">john.doe@email.com · London, UK</div>
                 </div>
               </div>
-
-              <div style={{ height: 1, background: '#f0f0f0', marginBottom: 18 }} />
-
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#764ba2', textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10 }}>Work Experience</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#1a1a2e' }}>Senior Software Engineer</div>
-                <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>TechCorp · 2021 – Present</div>
+              <div className="h-px bg-[#f0f0f0] mb-[18px]" />
+              <div className="mb-4">
+                <div className="text-[10px] font-extrabold text-[#764ba2] uppercase tracking-[1.2px] mb-2.5">Work Experience</div>
+                <div className="text-sm font-bold text-[#1a1a2e]">Senior Software Engineer</div>
+                <div className="text-xs text-[#888] mb-2">TechCorp · 2021 – Present</div>
                 {[
                   '• Boosted system performance by 40% through architecture optimisation',
                   '• Led a team of 6 engineers on a cloud-native migration project',
                   '• Cut deployment time by 60% by implementing a full CI/CD pipeline',
                 ].map((line, i) => (
-                  <div key={i} style={{ fontSize: 12, color: '#444', marginBottom: 4, lineHeight: 1.5 }}>{line}</div>
+                  <div key={i} className="text-xs text-[#444] mb-1 leading-[1.5]">{line}</div>
                 ))}
               </div>
-
-              <div style={{ background: 'linear-gradient(135deg, #667eea12, #764ba218)', borderRadius: 12, padding: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#764ba2' }}>✨ ATS Match Score</span>
-                  <span style={{ fontSize: 22, fontWeight: 900, color: '#764ba2' }}>94%</span>
+              <div className="rounded-xl p-3.5" style={{ background: 'linear-gradient(135deg, #667eea12, #764ba218)' }}>
+                <div className="flex justify-between items-center mb-2.5">
+                  <span className="text-[13px] font-bold text-[#764ba2]">✨ ATS Match Score</span>
+                  <span className="text-[22px] font-black text-[#764ba2]">94%</span>
                 </div>
-                <div style={{ height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{ height: 8, width: '94%', background: 'linear-gradient(90deg, #667eea, #764ba2)', borderRadius: 4 }} />
+                <div className="h-2 bg-[#e5e7eb] rounded overflow-hidden">
+                  <div className="h-2 w-[94%] rounded" style={{ background: 'linear-gradient(90deg, #667eea, #764ba2)' }} />
                 </div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 12, flexWrap: 'wrap' }}>
+                <div className="flex gap-1.5 mt-3 flex-wrap">
                   {['React', 'TypeScript', 'AWS', 'CI/CD', 'Agile'].map(kw => (
-                    <span key={kw} style={{ fontSize: 11, fontWeight: 600, background: '#764ba220', color: '#764ba2', padding: '3px 10px', borderRadius: 20 }}>{kw}</span>
+                    <Badge key={kw}>{kw}</Badge>
                   ))}
                 </div>
               </div>
@@ -204,125 +146,92 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
-      <section id="features" className="sectionPad" style={{ padding: '80px 2rem', background: '#fafafa' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 800, marginBottom: 16, letterSpacing: '-0.5px' }}>
+      {/* FEATURES */}
+      <section id="features" className="py-20 px-8 bg-[#fafafa]">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="font-extrabold mb-4 tracking-tight" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)' }}>
               Everything you need to land the interview
             </h2>
-            <p style={{ fontSize: '1.1rem', color: '#666', maxWidth: 560, margin: '0 auto' }}>
+            <p className="text-[1.1rem] text-[#666] max-w-[560px] mx-auto">
               One intelligent tool that rewrites your CV to perfectly match any job — in seconds.
             </p>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 28 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
             {features.map((f, i) => (
-              <div key={i} style={{
-                background: 'white', borderRadius: 16, padding: '28px 28px',
-                border: '1px solid #e8e8f0',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'default',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(118,75,162,0.12)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}>
-                <div style={{ fontSize: 32, marginBottom: 16 }}>{f.icon}</div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10, color: '#1a1a2e' }}>{f.title}</h3>
-                <p style={{ fontSize: 15, color: '#666', lineHeight: 1.6 }}>{f.desc}</p>
-              </div>
+              <Card key={i} className="p-7 border-[#e8e8f0] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(118,75,162,0.12)] transition-all cursor-default">
+                <div className="text-[32px] mb-4">{f.icon}</div>
+                <h3 className="text-lg font-bold mb-2.5 text-[#1a1a2e]">{f.title}</h3>
+                <p className="text-[15px] text-[#666] leading-[1.6]">{f.desc}</p>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="sectionPad" style={{ padding: '80px 2rem', background: 'white' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 800, marginBottom: 16, letterSpacing: '-0.5px' }}>
+      {/* HOW IT WORKS */}
+      <section id="how-it-works" className="py-20 px-8 bg-white">
+        <div className="max-w-[900px] mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="font-extrabold mb-4 tracking-tight" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)' }}>
               Three steps to your perfect CV
             </h2>
-            <p style={{ fontSize: '1.1rem', color: '#666' }}>Simple, fast, and incredibly effective.</p>
+            <p className="text-[1.1rem] text-[#666]">Simple, fast, and incredibly effective.</p>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 40 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
             {steps.map((s, i) => (
-              <div key={i} style={{ textAlign: 'center', position: 'relative' }}>
-                <div style={{
-                  width: 72, height: 72, borderRadius: 36, margin: '0 auto 20px',
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 22, fontWeight: 900, color: 'white',
-                  boxShadow: '0 8px 24px rgba(118,75,162,0.3)',
-                }}>{s.num}</div>
-                <h3 style={{ fontSize: 19, fontWeight: 700, marginBottom: 12, color: '#1a1a2e' }}>{s.title}</h3>
-                <p style={{ fontSize: 15, color: '#666', lineHeight: 1.65 }}>{s.desc}</p>
+              <div key={i} className="text-center">
+                <div
+                  className="w-[72px] h-[72px] rounded-full mx-auto mb-5 flex items-center justify-center text-[22px] font-black text-white shadow-[0_8px_24px_rgba(118,75,162,0.3)]"
+                  style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+                >{s.num}</div>
+                <h3 className="text-[19px] font-bold mb-3 text-[#1a1a2e]">{s.title}</h3>
+                <p className="text-[15px] text-[#666] leading-[1.65]">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA BANNER ── */}
-      <section style={{
-        background: 'linear-gradient(135deg, #667eea, #764ba2)',
-        padding: '72px 2rem', textAlign: 'center',
-      }}>
-        <div style={{ maxWidth: 680, margin: '0 auto', color: 'white' }}>
-          <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 800, marginBottom: 16, letterSpacing: '-0.5px' }}>
+      {/* CTA BANNER */}
+      <section
+        className="py-[72px] px-8 text-center"
+        style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+      >
+        <div className="max-w-[680px] mx-auto text-white">
+          <h2 className="font-extrabold mb-4 tracking-tight" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)' }}>
             Ready to land more interviews?
           </h2>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: 36, lineHeight: 1.6 }}>
+          <p className="text-[1.1rem] opacity-90 mb-9 leading-[1.6]">
             Join thousands of job seekers who use cv2jd to tailor their CVs and stand out from the crowd.
           </p>
-          <Link href="/tailor" style={{
-            background: 'white', color: '#764ba2',
-            padding: '18px 44px', borderRadius: 50, fontSize: 17, fontWeight: 700,
-            boxShadow: '0 8px 28px rgba(0,0,0,0.2)', display: 'inline-block',
-          }}>
-            Start Tailoring — It&apos;s Free →
-          </Link>
+          <Button
+            asChild
+            className="h-14 px-11 text-[17px] bg-white text-[#764ba2] hover:bg-white/90 shadow-[0_8px_28px_rgba(0,0,0,0.2)] font-bold"
+          >
+            <Link href="/tailor">Start Tailoring — It&apos;s Free →</Link>
+          </Button>
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer style={{ background: '#0f0f1a', color: '#aaa', padding: '40px 2rem' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 12, fontWeight: 800,
-            }}>cv</div>
-            <span style={{ fontWeight: 700, color: 'white', fontSize: 18 }}>cv2jd</span>
+      {/* FOOTER */}
+      <footer className="bg-[#0f0f1a] text-[#aaa] py-10 px-8">
+        <div className="max-w-[1200px] mx-auto flex flex-wrap justify-between items-center gap-4">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-extrabold"
+              style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+            >cv</div>
+            <span className="font-bold text-white text-lg">cv2jd</span>
           </div>
-          <div style={{ fontSize: 14 }}>© 2026 cv2jd. AI-powered CV tailoring.</div>
-          <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>
-            <Link href="/privacy" style={{ color: '#aaa' }}
-              onMouseEnter={e => e.target.style.color = 'white'}
-              onMouseLeave={e => e.target.style.color = '#aaa'}>Privacy</Link>
-            <Link href="/terms" style={{ color: '#aaa' }}
-              onMouseEnter={e => e.target.style.color = 'white'}
-              onMouseLeave={e => e.target.style.color = '#aaa'}>Terms</Link>
-            <Link href="/pricing" style={{ color: '#aaa' }}
-              onMouseEnter={e => e.target.style.color = 'white'}
-              onMouseLeave={e => e.target.style.color = '#aaa'}>Contact</Link>
+          <div className="text-sm">© 2026 cv2jd. AI-powered CV tailoring.</div>
+          <div className="flex gap-5 text-sm">
+            <Link href="/privacy" className="text-[#aaa] hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="text-[#aaa] hover:text-white transition-colors">Terms</Link>
+            <Link href="/pricing" className="text-[#aaa] hover:text-white transition-colors">Contact</Link>
           </div>
         </div>
       </footer>
-      <style jsx global>{`
-        @media (max-width: 768px) {
-          .navInner { padding: 0 1rem !important; }
-          .navLinks { display: none !important; }
-          .navLogin { display: none !important; }
-          .heroGrid { grid-template-columns: 1fr !important; padding: 2.5rem 1rem 3rem !important; }
-          .heroCard { display: none !important; }
-          .heroCtas { flex-direction: column !important; }
-          .heroCtas a { text-align: center !important; padding: 14px 24px !important; }
-          .sectionPad { padding: 48px 1rem !important; }
-        }
-      `}</style>
     </>
   )
 }
