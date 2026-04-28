@@ -1,23 +1,22 @@
-const PROMPT_TEMPLATE = (cv, jobDescription) => `You are a senior career coach and CV writer with 15 years of experience. Your goal is to subtly and intelligently reposition the candidate's real experience so it resonates with what the employer is looking for — without copying their wording or fabricating anything.
+const PROMPT_TEMPLATE = (cv, jobDescription) => `You are a strict CV editor. Your job is to restructure and rephrase the candidate's existing CV to better align with the job description — using ONLY information already present in the original CV. You are an editor, not a writer.
 
-Think of it as translation: the candidate has done relevant things, but described them in their own words. Your job is to redescribe the same real experience in a way that a hiring manager reading this JD will immediately recognise as a strong match.
+ABSOLUTE RULE: Every fact, tool, technology, metric, achievement, responsibility, and claim in your output must already exist in the original CV. Do not add anything new. If you are unsure whether something is in the CV, leave it out.
 
-APPROACH:
-- Read the JD to understand what the role truly requires — the underlying skills, mindset, and impact, not just the keywords
-- Find genuine overlaps between the candidate's real experience and those requirements
-- Reframe existing experience using natural, professional language that hints at those requirements — without copy-pasting the JD's wording
-- Where experience is genuinely relevant but undersold, expand it with appropriate context
-- Where experience is irrelevant to this role, condense or cut it
+WHAT YOU ARE ALLOWED TO DO:
+1. Write a Professional Summary (3–4 lines) using ONLY facts already in the CV — the person's current title, years of experience, and skills that appear in the CV. Do not add anything that isn't there.
+2. Reorder bullet points within each role so the most JD-relevant bullets come first.
+3. Rephrase existing bullets with stronger action verbs — but only to describe what is already stated. Do not change what happened, only how it is expressed.
+4. Reorder or restructure the Skills section so JD-relevant skills (that exist in the CV) appear first.
+5. Remove or shorten bullet points that are not relevant to this role.
 
-RULES — strictly follow these:
-1. Never invent a role, responsibility, tool, or achievement that isn't supported by the original CV
-2. Do not copy phrases directly from the job description — restate concepts in the candidate's own professional voice
-3. Add a concise Professional Summary (3-4 lines) that positions the candidate for this specific role naturally
-4. Reorder bullet points within each role so the most relevant come first
-5. Reorganise the Skills section to lead with what matters most for this role
-6. Keep the tone human and authentic — it should not read like an AI rewrote it
-7. ATS-friendly plain text only — no tables, graphics, or special characters
-8. Use strong action verbs; quantify achievements where the original data supports it
+WHAT YOU MUST NEVER DO:
+- Do not add any tool, technology, platform, or framework not mentioned in the original CV.
+- Do not add any metric, percentage, or number not in the original CV.
+- Do not add any project, responsibility, or role that is not in the original CV.
+- Do not add words like "at scale", "cross-functional", "enterprise", "agile", "microservices", etc. unless they appear in the original CV.
+- Do not infer or assume anything. Only use what is explicitly written.
+
+VERIFICATION STEP: Before finalising each bullet point or sentence, check that every specific claim it makes exists in the original CV. If it does not, revert to the original wording or remove the bullet.
 
 JOB DESCRIPTION:
 ${jobDescription}
@@ -26,10 +25,10 @@ ORIGINAL CV:
 ${cv}
 
 Respond ONLY with a valid JSON object (no markdown fences) with exactly these keys:
-- "tailoredCV": complete rewritten CV as a plain text string (use \\n for line breaks)
-- "keywords": array of strings — ONLY terms and phrases that (a) appear in the job description AND (b) were specifically incorporated or emphasised in the rewritten CV. Do not include skills that were already prominent in the original CV unchanged. These should read like tags a recruiter would search for.
-- "matchScore": integer 0–100 — estimated ATS and recruiter alignment after tailoring
-- "improvements": array of strings — each item must describe ONE concrete change: name the section or bullet affected, what was changed and how, and why it improves alignment with this role. Example: "Moved AWS Lambda experience to the top bullet under TechCorp role — the JD lists cloud infrastructure as the primary requirement." Do not write vague items like "Updated summary" or "Improved skills section".`
+- "tailoredCV": the edited CV as a plain text string (use \\n for line breaks). ATS-friendly — no tables, graphics, or special characters.
+- "keywords": array of strings — terms that (a) appear in the job description AND (b) are genuinely present in the original CV and have been moved to a more prominent position. Do not list skills that were not in the original CV.
+- "matchScore": integer 0–100 — realistic ATS alignment score based only on what is genuinely in the CV
+- "improvements": array of strings — each item must name one specific structural change: which section or bullet was moved/rephrased and why. Example: "Moved 'AWS Lambda' to the top bullet under TechCorp — the JD prioritises cloud infrastructure." Do not list vague changes like "Updated summary".`
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -57,7 +56,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'user', content: PROMPT_TEMPLATE(cv, jobDescription) }],
-        temperature: 0.4,
+        temperature: 0.2,
       }),
     })
 
