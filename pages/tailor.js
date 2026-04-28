@@ -336,20 +336,14 @@ export default function Tailor() {
         <title>Tailor Your CV — cv2jd</title>
         <meta name="description" content="Paste your CV and job description to get an AI-tailored, ATS-optimised CV instantly." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>" />
+        <link rel="icon" href="/logo.png" type="image/png" />
       </Head>
 
       {/* NAV */}
       <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-border">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div
-              className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center text-white text-xs font-extrabold"
-              style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
-            >cv</div>
-            <span className="text-[20px] font-extrabold bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
-              cv2jd
-            </span>
+          <Link href="/" className="flex items-center">
+            <img src="/logo.png" alt="cv2jd" className="h-10 w-auto" />
           </Link>
           <span className="hidden sm:block text-sm text-[#888] font-medium">AI CV Tailoring Tool</span>
         </div>

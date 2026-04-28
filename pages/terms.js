@@ -82,7 +82,7 @@ export default function Terms() {
         <title>Terms of Service — cv2jd</title>
         <meta name="description" content="Terms of Service for cv2jd — the free AI-powered CV tailoring tool." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>" />
+        <link rel="icon" href="/logo.png" type="image/png" />
       </Head>
 
       {/* NAV */}
@@ -92,16 +92,8 @@ export default function Terms() {
         borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 13, fontWeight: 800,
-            }}>cv</div>
-            <span style={{ fontSize: 22, fontWeight: 800, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              cv2jd
-            </span>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <img src="/logo.png" alt="cv2jd" style={{ height: 40, width: 'auto' }} />
           </Link>
           <Link href="/tailor" style={{
             background: 'linear-gradient(135deg, #667eea, #764ba2)',
@@ -222,14 +214,8 @@ export default function Terms() {
       {/* FOOTER */}
       <footer style={{ background: '#0f0f1a', color: '#aaa', padding: '40px 2rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 12, fontWeight: 800,
-            }}>cv</div>
-            <span style={{ fontWeight: 700, color: 'white', fontSize: 18 }}>cv2jd</span>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src="/logo.png" alt="cv2jd" style={{ height: 32, width: 'auto', borderRadius: 6 }} />
           </div>
           <div style={{ fontSize: 14 }}>© 2026 cv2jd. AI-powered CV tailoring.</div>
           <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>

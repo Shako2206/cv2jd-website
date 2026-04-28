@@ -29,20 +29,14 @@ export default function Home() {
         <title>cv2jd — Tailor Your CV to Job Descriptions with AI</title>
         <meta name="description" content="AI-powered CV tailoring that maximises alignment with job descriptions and creates ATS-friendly applications in seconds." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>" />
+        <link rel="icon" href="/logo.png" type="image/png" />
       </Head>
 
       {/* NAV */}
       <nav className="fixed top-0 w-full z-[1000] bg-white/[0.92] backdrop-blur-md border-b border-black/[0.08]">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 h-[68px] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-9 h-9 rounded-[10px] flex items-center justify-center text-white text-[13px] font-extrabold tracking-tight"
-              style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
-            >cv</div>
-            <span className="text-[22px] font-extrabold bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
-              cv2jd
-            </span>
+          <div className="flex items-center">
+            <img src="/logo.png" alt="cv2jd" className="h-10 w-auto" />
           </div>
 
           {/* Desktop nav links */}
@@ -248,11 +242,7 @@ export default function Home() {
       <footer className="bg-[#0f0f1a] text-[#aaa] py-8 px-4 md:px-8">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row flex-wrap justify-between items-center gap-4 text-center sm:text-left">
           <div className="flex items-center gap-2.5">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-extrabold"
-              style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
-            >cv</div>
-            <span className="font-bold text-white text-lg">cv2jd</span>
+            <img src="/logo.png" alt="cv2jd" className="h-8 w-auto rounded-lg" />
           </div>
           <div className="text-sm">© 2026 cv2jd. AI-powered CV tailoring.</div>
           <div className="flex gap-5 text-sm">
