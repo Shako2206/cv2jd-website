@@ -453,7 +453,7 @@ export default function Tailor() {
 
                 <TabsContent value="keywords">
                   <p className="text-[#666] text-sm mb-5">
-                    These keywords were identified from the job description and incorporated into your tailored CV:
+                    Terms from the job description that were specifically added or emphasised in your tailored CV — these are what ATS systems and recruiters will search for:
                   </p>
                   <div className="flex flex-wrap gap-2.5">
                     {(Array.isArray(result.keywords)
@@ -467,7 +467,7 @@ export default function Tailor() {
 
                 <TabsContent value="improvements">
                   <p className="text-[#666] text-sm mb-5">
-                    Here&apos;s what our AI changed to improve your CV&apos;s alignment with this role:
+                    Specific changes made to your CV — each one explains what was changed, where, and why it better matches this role:
                   </p>
                   <ul className="flex flex-col gap-3 list-none p-0 m-0">
                     {(Array.isArray(result.improvements) ? result.improvements : [result.improvements])

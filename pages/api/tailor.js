@@ -27,9 +27,9 @@ ${cv}
 
 Respond ONLY with a valid JSON object (no markdown fences) with exactly these keys:
 - "tailoredCV": complete rewritten CV as a plain text string (use \\n for line breaks)
-- "keywords": array of strings — the key themes and skills woven in naturally
+- "keywords": array of strings — ONLY terms and phrases that (a) appear in the job description AND (b) were specifically incorporated or emphasised in the rewritten CV. Do not include skills that were already prominent in the original CV unchanged. These should read like tags a recruiter would search for.
 - "matchScore": integer 0–100 — estimated ATS and recruiter alignment after tailoring
-- "improvements": array of strings — the specific repositioning decisions made and why`
+- "improvements": array of strings — each item must describe ONE concrete change: name the section or bullet affected, what was changed and how, and why it improves alignment with this role. Example: "Moved AWS Lambda experience to the top bullet under TechCorp role — the JD lists cloud infrastructure as the primary requirement." Do not write vague items like "Updated summary" or "Improved skills section".`
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
