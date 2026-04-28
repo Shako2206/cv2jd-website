@@ -398,6 +398,12 @@ export default function Tailor() {
             </div>
           )}
 
+          {/* Privacy notice */}
+          <p style={{ textAlign: 'center', fontSize: 13, color: '#999', marginBottom: 16 }}>
+            🔒 Your CV and job description are sent to Groq&apos;s AI API for processing and are <strong>not stored</strong> on our servers.{' '}
+            <Link href="/privacy" style={{ color: '#764ba2', textDecoration: 'underline' }}>Learn more</Link>
+          </p>
+
           {/* Tailor button */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 40 }}>
             <button

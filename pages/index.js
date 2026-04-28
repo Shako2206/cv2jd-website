@@ -297,13 +297,17 @@ export default function Home() {
             }}>cv</div>
             <span style={{ fontWeight: 700, color: 'white', fontSize: 18 }}>cv2jd</span>
           </div>
-          <div style={{ fontSize: 14 }}>© 2025 cv2jd. AI-powered CV tailoring.</div>
+          <div style={{ fontSize: 14 }}>© 2026 cv2jd. AI-powered CV tailoring.</div>
           <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>
-            {['Privacy', 'Terms', 'Contact'].map(l => (
-              <a key={l} href="#" style={{ color: '#aaa' }}
-                onMouseEnter={e => e.target.style.color = 'white'}
-                onMouseLeave={e => e.target.style.color = '#aaa'}>{l}</a>
-            ))}
+            <Link href="/privacy" style={{ color: '#aaa' }}
+              onMouseEnter={e => e.target.style.color = 'white'}
+              onMouseLeave={e => e.target.style.color = '#aaa'}>Privacy</Link>
+            <Link href="/terms" style={{ color: '#aaa' }}
+              onMouseEnter={e => e.target.style.color = 'white'}
+              onMouseLeave={e => e.target.style.color = '#aaa'}>Terms</Link>
+            <Link href="/pricing" style={{ color: '#aaa' }}
+              onMouseEnter={e => e.target.style.color = 'white'}
+              onMouseLeave={e => e.target.style.color = '#aaa'}>Contact</Link>
           </div>
         </div>
       </footer>
