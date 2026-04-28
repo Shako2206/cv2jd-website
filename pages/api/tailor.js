@@ -1,54 +1,77 @@
-const PROMPT_TEMPLATE = (cv, jobDescription) => `You are a strict CV editor. Your job is to restructure and rephrase the candidate's existing CV to better align with the job description — using ONLY information already present in the original CV. You are an editor, not a writer.
+const PROMPT_TEMPLATE = (cv, jobDescription) => `You are an expert CV writer and career strategist. Your task is to produce the most compelling, interview-winning version of this candidate's CV for the specific role — using only the experience they already have.
 
-ABSOLUTE RULE: Every fact, tool, technology, metric, achievement, responsibility, and claim in your output must already exist in the original CV. Do not add anything new. If you are unsure whether something is in the CV, leave it out.
+GOAL: Make the candidate look as strong as possible for this job by surfacing what is in their CV and describing it in the most powerful way. You are a skilled rewriter, not an inventor.
 
-WHAT YOU ARE ALLOWED TO DO:
-1. Write a Professional Summary (3–4 lines) using ONLY facts already in the CV — the person's current title, years of experience, and skills that appear in the CV. Do not add anything that isn't there.
-2. Reorder bullet points within each role so the most JD-relevant bullets come first.
-3. Rephrase existing bullets with stronger action verbs — but only to describe what is already stated. Do not change what happened, only how it is expressed.
-4. Reorder or restructure the Skills section so JD-relevant skills (that exist in the CV) appear first.
-5. Remove or shorten bullet points that are not relevant to this role.
+━━━ WHAT YOU CAN DO ━━━
 
-WHAT YOU MUST NEVER DO:
-- Do not add any tool, technology, platform, or framework not mentioned in the original CV.
-- Do not add any metric, percentage, or number not in the original CV.
-- Do not add any project, responsibility, or role that is not in the original CV.
-- Do not add words like "at scale", "cross-functional", "enterprise", "agile", "microservices", etc. unless they appear in the original CV.
-- Do not infer or assume anything. Only use what is explicitly written.
+1. Write a sharp Professional Summary (3–4 sentences) that speaks directly to what this JD is looking for, using only facts from the original CV.
+2. Rewrite existing bullet points with stronger, more impactful language — same facts, better framing.
+3. Reorder bullets within each role so the most JD-relevant come first.
+4. Restructure Skills to lead with what this role requires (only skills already in the CV).
+5. Remove or condense experience that is not relevant to this role.
 
-VERIFICATION STEP: Before finalising each bullet point or sentence, check that every specific claim it makes exists in the original CV. If it does not, revert to the original wording or remove the bullet.
+━━━ HOW TO WRITE BULLETS THAT WIN INTERVIEWS ━━━
 
-REQUIRED OUTPUT FORMAT — the tailoredCV string must follow this exact plain-text structure. Deviating from this format will break the PDF renderer.
+Every bullet must follow this formula: strong action verb → what you did → the result or scale.
 
-Line 1:       Full name only (e.g. "Jane Smith")
-Lines 2–N:    Contact details, one per line (e.g. email, phone, city, LinkedIn). Stop at first blank line.
-Blank line
+✓ GOOD: "Reduced API response time by 60% by refactoring the caching layer"
+✗ WEAK: "Worked on improving API performance"
+
+Rules:
+- Always open with a powerful past-tense verb: Led, Built, Engineered, Delivered, Scaled, Launched, Drove, Designed, Implemented, Optimised, Reduced, Increased, Saved, Managed, Negotiated, Automated
+- If a number or metric exists in the original CV, use it prominently
+- Cut all weak openers: "responsible for", "assisted with", "helped to", "involved in", "worked on", "contributed to"
+- Each bullet should make a hiring manager think "this person gets things done"
+
+━━━ HONESTY RULES — never break these ━━━
+
+- Never add a tool, technology, platform, or skill not in the original CV
+- Never invent or inflate a metric, percentage, number, or timeframe
+- Never add a role, project, or responsibility that is not in the original CV
+- Never add a buzzword ("microservices", "agile", "at scale", "enterprise", "cross-functional") unless it appears in the original CV
+- You may strengthen how something is described — you may not change what happened
+
+━━━ REQUIRED OUTPUT FORMAT ━━━
+
+This feeds directly into a PDF renderer — any deviation breaks the formatting.
+
+[Full Name]
+[email · phone · city · LinkedIn]
+
 PROFESSIONAL SUMMARY
-2–3 sentence paragraph. No bullets here.
-Blank line
-WORK EXPERIENCE
-Job Title
-Company · Start Year – End Year   ← dates on their own line directly after the company
-- First bullet point
-- Second bullet point
-Blank line
-[repeat for other roles]
-EDUCATION
-Degree Title
-Institution · Year
-Blank line
-SKILLS
-Category: skill1, skill2, skill3
-[other categories]
+Compelling 3–4 sentence paragraph. No bullets. Speaks directly to this role.
 
-FORMATTING RULES — follow exactly:
-- Section headers must be ALL CAPS with no extra punctuation (WORK EXPERIENCE, EDUCATION, SKILLS, PROFESSIONAL SUMMARY, etc.)
-- Bullet points must start with "- " (dash space). No asterisks, no numbers, no "•".
-- Dates go on their own line immediately after the company/institution line (e.g. "2019 – 2023")
-- Job titles and degree titles are plain lines starting with a capital letter — no bullet, no bold markers
-- No markdown, no asterisks, no ** bold markers, no ### headers
-- Separate sections with exactly one blank line
-- Contact lines go immediately after the name with no blank line between them
+WORK EXPERIENCE
+
+[Job Title]
+[Company Name · Start Year – End Year]
+- Most impactful bullet — lead with result, open with action verb
+- Second bullet
+- Third bullet
+
+[Previous Job Title]
+[Company Name · Start Year – End Year]
+- Bullet
+- Bullet
+
+EDUCATION
+
+[Degree]
+[Institution · Year]
+
+SKILLS
+
+[Category]: skill1, skill2, skill3
+[Category]: skill1, skill2
+
+FORMATTING RULES — every rule is mandatory:
+- Section headers: ALL CAPS only (PROFESSIONAL SUMMARY, WORK EXPERIENCE, EDUCATION, SKILLS)
+- Bullets: start with "- " (dash space). Never use *, •, numbers, or any other marker
+- Company/institution line: always in the format "Name · Year – Year" using the middle dot · as separator
+- Job title goes on its own line BEFORE the company line
+- No markdown, no **bold**, no ###headers, no HTML
+- One blank line between sections, no blank lines within a job's bullets
+- Contact details on one or two lines, immediately after the name
 
 JOB DESCRIPTION:
 ${jobDescription}
@@ -56,11 +79,20 @@ ${jobDescription}
 ORIGINAL CV:
 ${cv}
 
-Respond ONLY with a valid JSON object (no markdown fences) with exactly these keys:
-- "tailoredCV": the edited CV as a plain text string using the format above (use \\n for line breaks)
-- "keywords": array of strings — terms that (a) appear in the job description AND (b) are genuinely present in the original CV and have been moved to a more prominent position. Do not list skills that were not in the original CV.
-- "matchScore": integer 0–100 — realistic ATS alignment score based only on what is genuinely in the CV
-- "improvements": array of strings — each item must name one specific structural change: which section or bullet was moved/rephrased and why. Example: "Moved 'AWS Lambda' to the top bullet under TechCorp — the JD prioritises cloud infrastructure." Do not list vague changes like "Updated summary".`
+Respond ONLY with a valid JSON object — no markdown fences, no extra text, just the JSON.
+
+{
+  "tailoredCV": "full CV text using the format above, \\n for line breaks",
+  "keywords": ["term1", "term2"],
+  "matchScore": 85,
+  "improvements": ["Specific change 1", "Specific change 2"]
+}
+
+Key definitions:
+- tailoredCV: the complete rewritten CV following the format spec above
+- keywords: JD terms that genuinely exist in the original CV and have been surfaced or made more prominent — never list a skill not in the original CV
+- matchScore: honest 0–100 ATS score reflecting real alignment between the CV and JD
+- improvements: specific, named changes — "Moved AWS experience to top bullet under TechCorp — JD prioritises cloud infrastructure" not "Updated skills section"`
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -88,7 +120,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'user', content: PROMPT_TEMPLATE(cv, jobDescription) }],
-        temperature: 0.2,
+        temperature: 0.3,
       }),
     })
 
