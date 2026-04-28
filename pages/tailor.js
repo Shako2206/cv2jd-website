@@ -317,7 +317,7 @@ export default function Tailor() {
 
       {/* NAV */}
       <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-[1400px] mx-auto px-8 h-16 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div
               className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center text-white text-xs font-extrabold"
@@ -405,31 +405,31 @@ export default function Tailor() {
 
               {/* Results header */}
               <div
-                className="px-7 py-6 flex flex-wrap justify-between items-center gap-4"
+                className="px-4 sm:px-7 py-4 sm:py-6 flex flex-col sm:flex-row sm:flex-wrap sm:justify-between sm:items-center gap-4"
                 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
               >
                 <div className="text-white">
                   <div className="text-xs font-semibold opacity-80 uppercase tracking-[1px] mb-1">Result</div>
-                  <div className="text-[22px] font-extrabold">Your Tailored CV is Ready</div>
+                  <div className="text-[18px] sm:text-[22px] font-extrabold">Your Tailored CV is Ready</div>
                 </div>
 
-                <div className="flex gap-3 items-center flex-wrap">
+                <div className="flex flex-row flex-wrap items-center gap-3">
                   {/* Score badge */}
-                  <div className="bg-white/20 border border-white/30 rounded-xl px-5 py-2.5 text-center">
-                    <div className="text-[11px] text-white/80 font-semibold mb-0.5">ATS MATCH</div>
-                    <div className="text-[28px] font-black" style={{ color: scoreColor }}>{score}%</div>
+                  <div className="bg-white/20 border border-white/30 rounded-xl px-4 py-2 text-center">
+                    <div className="text-[10px] text-white/80 font-semibold mb-0.5">ATS MATCH</div>
+                    <div className="text-[24px] sm:text-[28px] font-black" style={{ color: scoreColor }}>{score}%</div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
+                  <div className="flex flex-col xs:flex-row gap-2 flex-1 sm:flex-none">
                     <button
                       onClick={handleCopy}
-                      className={`px-[22px] py-2.5 rounded-full text-sm font-bold transition-all border-none cursor-pointer ${copied ? 'bg-[#4ade80] text-white' : 'bg-white text-[#764ba2]'}`}
+                      className={`px-4 sm:px-[22px] py-2 sm:py-2.5 rounded-full text-sm font-bold transition-all border-none cursor-pointer ${copied ? 'bg-[#4ade80] text-white' : 'bg-white text-[#764ba2]'}`}
                     >
                       {copied ? '✓ Copied!' : '📋 Copy CV'}
                     </button>
                     <button
                       onClick={handleDownload}
-                      className="bg-white/15 text-white border-2 border-white/40 px-[22px] py-2.5 rounded-full text-sm font-bold cursor-pointer hover:bg-white/25 transition-colors"
+                      className="bg-white/15 text-white border-2 border-white/40 px-4 sm:px-[22px] py-2 sm:py-2.5 rounded-full text-sm font-bold cursor-pointer hover:bg-white/25 transition-colors"
                     >
                       ⬇ Download PDF
                     </button>
@@ -440,42 +440,42 @@ export default function Tailor() {
               {/* Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="w-full rounded-none border-b border-border bg-[#fafafa] px-0">
-                  <TabsTrigger value="cv" className="flex-1 rounded-none">📄 Tailored CV</TabsTrigger>
-                  <TabsTrigger value="keywords" className="flex-1 rounded-none">🔑 Keywords</TabsTrigger>
-                  <TabsTrigger value="improvements" className="flex-1 rounded-none">📈 Improvements</TabsTrigger>
+                  <TabsTrigger value="cv" className="flex-1 rounded-none text-xs sm:text-sm">📄 Tailored CV</TabsTrigger>
+                  <TabsTrigger value="keywords" className="flex-1 rounded-none text-xs sm:text-sm">🔑 Keywords</TabsTrigger>
+                  <TabsTrigger value="improvements" className="flex-1 rounded-none text-xs sm:text-sm">📈 Improvements</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="cv">
-                  <pre className="whitespace-pre-wrap font-[inherit] text-[15px] leading-[1.75] text-[#1a1a2e] bg-[#fafafa] rounded-xl p-6 border border-[#eee] max-h-[600px] overflow-y-auto">
+                <TabsContent value="cv" className="p-4 sm:p-7">
+                  <pre className="whitespace-pre-wrap font-[inherit] text-[13px] sm:text-[15px] leading-[1.75] text-[#1a1a2e] bg-[#fafafa] rounded-xl p-4 sm:p-6 border border-[#eee] max-h-[500px] overflow-y-auto">
                     {result.tailoredCV}
                   </pre>
                 </TabsContent>
 
-                <TabsContent value="keywords">
-                  <p className="text-[#666] text-sm mb-5">
+                <TabsContent value="keywords" className="p-4 sm:p-7">
+                  <p className="text-[#666] text-sm mb-4">
                     Terms from the job description that were specifically added or emphasised in your tailored CV — these are what ATS systems and recruiters will search for:
                   </p>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-2">
                     {(Array.isArray(result.keywords)
                       ? result.keywords
                       : String(result.keywords || '').split(',').map(k => k.trim()).filter(Boolean)
                     ).map((kw, i) => (
-                      <Badge key={i} className="px-[18px] py-2 text-sm">{kw}</Badge>
+                      <Badge key={i} className="px-3 sm:px-[18px] py-1.5 sm:py-2 text-xs sm:text-sm">{kw}</Badge>
                     ))}
                   </div>
                 </TabsContent>
 
-                <TabsContent value="improvements">
-                  <p className="text-[#666] text-sm mb-5">
+                <TabsContent value="improvements" className="p-4 sm:p-7">
+                  <p className="text-[#666] text-sm mb-4">
                     Specific changes made to your CV — each one explains what was changed, where, and why it better matches this role:
                   </p>
                   <ul className="flex flex-col gap-3 list-none p-0 m-0">
                     {(Array.isArray(result.improvements) ? result.improvements : [result.improvements])
                       .filter(Boolean)
                       .map((item, i) => (
-                        <li key={i} className="flex gap-3 items-start px-[18px] py-3.5 bg-[#f8f8fc] rounded-xl border border-[#eee]">
-                          <span className="text-[#4ade80] text-lg flex-shrink-0">✓</span>
-                          <span className="text-[15px] text-[#333] leading-[1.6]">{String(item)}</span>
+                        <li key={i} className="flex gap-3 items-start px-3 sm:px-[18px] py-3 sm:py-3.5 bg-[#f8f8fc] rounded-xl border border-[#eee]">
+                          <span className="text-[#4ade80] text-base sm:text-lg flex-shrink-0">✓</span>
+                          <span className="text-sm sm:text-[15px] text-[#333] leading-[1.6]">{String(item)}</span>
                         </li>
                       ))}
                   </ul>
@@ -483,7 +483,7 @@ export default function Tailor() {
               </Tabs>
 
               {/* Feedback widget */}
-              <div className="border-t border-[#eee] bg-[#fafafa] px-7 py-[18px] flex items-center justify-center gap-3.5 flex-wrap">
+              <div className="border-t border-[#eee] bg-[#fafafa] px-4 sm:px-7 py-4 flex items-center justify-center gap-3 sm:gap-3.5 flex-wrap">
                 {feedbackVote ? (
                   <div className="text-sm text-[#555]">
                     {feedbackVote === 'up' ? '🙏 Thanks for the feedback!' : "🙏 Thanks — we'll keep improving."}
@@ -609,7 +609,7 @@ function InputCard({ label, placeholder, value, onChange, charCount, icon, examp
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="flex-1 border-none p-5 text-sm leading-[1.65] text-[#333] resize-none min-h-[340px] font-[inherit] bg-white focus:outline-none"
+          className="flex-1 border-none p-4 sm:p-5 text-sm leading-[1.65] text-[#333] resize-none min-h-[220px] sm:min-h-[340px] font-[inherit] bg-white focus:outline-none"
         />
       )}
     </div>

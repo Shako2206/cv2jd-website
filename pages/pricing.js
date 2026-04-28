@@ -50,7 +50,7 @@ export default function Pricing() {
 
       {/* NAV */}
       <nav className="fixed top-0 w-full z-[1000] bg-white/[0.92] backdrop-blur-md border-b border-black/[0.08]">
-        <div className="max-w-[1200px] mx-auto px-8 h-[68px] flex items-center justify-between">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-8 h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div
               className="w-9 h-9 rounded-[10px] flex items-center justify-center text-white text-[13px] font-extrabold"
@@ -67,13 +67,13 @@ export default function Pricing() {
       </nav>
 
       {/* MAIN */}
-      <main className="min-h-screen pt-[68px] flex items-center justify-center px-8 py-20 bg-gradient-to-b from-[#f8f8fc] to-white">
+      <main className="min-h-screen pt-[68px] flex items-center justify-center px-4 md:px-8 py-10 md:py-20 bg-gradient-to-b from-[#f8f8fc] to-white">
         <div className="max-w-[600px] w-full text-center">
-          <div className="text-[68px] mb-5">🎉</div>
+          <div className="text-[56px] md:text-[68px] mb-4 md:mb-5">🎉</div>
 
           <h1
             className="font-black text-[#1a1a2e] mb-4 tracking-tight leading-[1.1]"
-            style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+            style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}
           >
             It&apos;s completely free.<br />
             <span className="bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">
@@ -81,17 +81,17 @@ export default function Pricing() {
             </span>
           </h1>
 
-          <p className="text-[1.1rem] text-[#666] leading-[1.7] mb-12">
-            No subscriptions, no free trial that expires, no hidden fees.<br />
+          <p className="text-base md:text-[1.1rem] text-[#666] leading-[1.7] mb-8 md:mb-12">
+            No subscriptions, no free trial that expires, no hidden fees.<br className="hidden sm:block" />
             Just paste your CV and job description — done.
           </p>
 
           <Card className="border-[#e8e8f0] shadow-[0_8px_40px_rgba(118,75,162,0.08)] text-left">
-            <CardContent className="p-10">
-              <div className="text-center mb-7">
-                <div className="text-[40px] mb-3">💬</div>
-                <h2 className="text-2xl font-extrabold text-[#1a1a2e] mb-2.5">The only thing we ask</h2>
-                <p className="text-[#777] text-[0.98rem] leading-[1.65]">
+            <CardContent className="p-6 sm:p-10">
+              <div className="text-center mb-6 md:mb-7">
+                <div className="text-[36px] md:text-[40px] mb-3">💬</div>
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1a1a2e] mb-2.5">The only thing we ask</h2>
+                <p className="text-[#777] text-sm md:text-[0.98rem] leading-[1.65]">
                   Your honest feedback — good, bad, or ugly. Did it help? Feel too robotic?
                   Miss the mark? Anything at all makes this better for everyone.
                 </p>
@@ -99,12 +99,12 @@ export default function Pricing() {
 
               {status === 'sent' ? (
                 <div
-                  className="rounded-2xl p-8 text-center border"
+                  className="rounded-2xl p-6 md:p-8 text-center border"
                   style={{ background: 'linear-gradient(135deg, #667eea10, #764ba215)', borderColor: '#764ba230' }}
                 >
-                  <div className="text-[44px] mb-3">🙏</div>
-                  <div className="text-[1.2rem] font-bold text-[#764ba2] mb-2">Thank you so much!</div>
-                  <div className="text-[#666] text-[0.95rem]">Your feedback means a lot and helps make cv2jd better for everyone.</div>
+                  <div className="text-[40px] md:text-[44px] mb-3">🙏</div>
+                  <div className="text-lg md:text-[1.2rem] font-bold text-[#764ba2] mb-2">Thank you so much!</div>
+                  <div className="text-[#666] text-sm md:text-[0.95rem]">Your feedback means a lot and helps make cv2jd better for everyone.</div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -131,8 +131,8 @@ export default function Pricing() {
                       onChange={e => setMessage(e.target.value)}
                       placeholder="Tell us anything — what worked, what didn't, what you'd love to see next..."
                       required
-                      rows={5}
-                      className="min-h-[120px]"
+                      rows={4}
+                      className="min-h-[100px] md:min-h-[120px]"
                     />
                   </div>
 
@@ -159,7 +159,7 @@ export default function Pricing() {
             </CardContent>
           </Card>
 
-          <div className="mt-10">
+          <div className="mt-8 md:mt-10">
             <p className="text-[#aaa] text-sm mb-4">Ready to tailor your CV?</p>
             <Button asChild variant="outline" className="h-12 px-8 text-[15px] font-bold">
               <Link href="/tailor">✨ Start Tailoring — It&apos;s Free</Link>
