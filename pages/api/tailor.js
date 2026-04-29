@@ -30,14 +30,18 @@ Rewrite the summary to speak directly to this role:
 - Max 75 words, no bullets, flowing prose only
 
 --- WORK EXPERIENCE ---
+IMPORTANT: Include every role from the original CV — never omit a job entirely.
+
 For each role:
 - Reorder bullets so the most JD-relevant experience appears first
 - Reframe bullets to highlight: relevant skills, business impact, leadership, ownership, and cross-functional work
 - Mirror the JD's exact language where it truthfully describes what the candidate did
 - Use strong action verbs: Led, Built, Engineered, Delivered, Scaled, Launched, Drove, Designed, Automated, Negotiated, Reduced, Streamlined, Overhauled, Expanded
 - Never use: "responsible for", "helped with", "worked on", "assisted", "involved in", "contributed to", "supported"
-- Trim each role to 3–5 bullets; the most recent or most relevant role may have up to 6
-- Cut bullets with zero relevance to this role
+- Most recent or most relevant role: 4–6 bullets
+- Supporting roles (still relevant): 3–4 bullets
+- Older or less relevant roles: condense to 2–3 bullets — but always keep the role, never remove it
+- Only remove individual bullets within a role when they add zero value; keep the role itself
 
 --- JOB TITLES ---
 Adjust a job title only if it genuinely clarifies scope without inflating seniority (e.g. "Engineer" → "Backend Engineer" if the CV content supports it). Never promote a title.
@@ -151,6 +155,7 @@ export default async function handler(req, res) {
         model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'user', content: PROMPT_TEMPLATE(cv, jobDescription) }],
         temperature: 0.3,
+        max_tokens: 8000,
       }),
     })
 
