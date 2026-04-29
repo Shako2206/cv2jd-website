@@ -461,6 +461,7 @@ export default function Tailor() {
                   <TabsTrigger value="cv" className="flex-1 rounded-none text-xs sm:text-sm">📄 Tailored CV</TabsTrigger>
                   <TabsTrigger value="keywords" className="flex-1 rounded-none text-xs sm:text-sm">🔑 Keywords</TabsTrigger>
                   <TabsTrigger value="improvements" className="flex-1 rounded-none text-xs sm:text-sm">📈 Improvements</TabsTrigger>
+                  <TabsTrigger value="gaps" className="flex-1 rounded-none text-xs sm:text-sm">⚠️ Gaps</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="cv" className="p-4 sm:p-7">
@@ -497,6 +498,24 @@ export default function Tailor() {
                         </li>
                       ))}
                   </ul>
+                </TabsContent>
+
+                <TabsContent value="gaps" className="p-4 sm:p-7">
+                  <p className="text-[#666] text-sm mb-4">
+                    Areas the job requires that are weak or missing in your CV — with honest suggestions on how to address each gap without fabricating experience:
+                  </p>
+                  {Array.isArray(result.gaps) && result.gaps.length > 0 ? (
+                    <ul className="flex flex-col gap-3 list-none p-0 m-0">
+                      {result.gaps.filter(Boolean).map((item, i) => (
+                        <li key={i} className="flex gap-3 items-start px-3 sm:px-[18px] py-3 sm:py-3.5 bg-[#fffbf0] rounded-xl border border-[#ffe4a0]">
+                          <span className="text-[#f59e0b] text-base sm:text-lg flex-shrink-0">⚠</span>
+                          <span className="text-sm sm:text-[15px] text-[#333] leading-[1.6]">{String(item)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-[#888] italic">No significant gaps identified — your CV maps well to this role.</p>
+                  )}
                 </TabsContent>
               </Tabs>
 
