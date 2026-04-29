@@ -172,15 +172,38 @@ export default async function handler(req, res) {
 
     const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
+    // Escape any literal control characters inside JSON string values.
+    // The model sometimes outputs real newlines/tabs inside strings instead of \n/\t.
+    function fixControlChars(str) {
+      let out = ''
+      let inString = false
+      let escaped = false
+      for (let i = 0; i < str.length; i++) {
+        const ch = str[i]
+        if (escaped) { out += ch; escaped = false; continue }
+        if (ch === '\\' && inString) { out += ch; escaped = true; continue }
+        if (ch === '"') { inString = !inString; out += ch; continue }
+        if (inString) {
+          if (ch === '\n') { out += '\\n'; continue }
+          if (ch === '\r') { out += '\\r'; continue }
+          if (ch === '\t') { out += '\\t'; continue }
+          const code = ch.charCodeAt(0)
+          if (code < 0x20) { out += '\\u' + code.toString(16).padStart(4, '0'); continue }
+        }
+        out += ch
+      }
+      return out
+    }
+
     let parsed
     try {
-      parsed = JSON.parse(cleaned)
+      parsed = JSON.parse(fixControlChars(cleaned))
     } catch {
       const match = cleaned.match(/\{[\s\S]*\}/)
       if (!match) {
         return res.status(502).json({ error: 'AI returned an unexpected format. Please try again.' })
       }
-      parsed = JSON.parse(match[0])
+      parsed = JSON.parse(fixControlChars(match[0]))
     }
 
     return res.status(200).json({
