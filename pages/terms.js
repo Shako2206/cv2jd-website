@@ -93,7 +93,7 @@ export default function Terms() {
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <img src="/logo.png" alt="cv2jd" style={{ height: 40, width: 'auto' }} />
+            <img src="/logo.png" alt="cv2jd" style={{ height: 48, width: 'auto' }} />
           </Link>
           <Link href="/tailor" style={{
             background: 'linear-gradient(135deg, #667eea, #764ba2)',
@@ -215,7 +215,7 @@ export default function Terms() {
       <footer style={{ background: '#0f0f1a', color: '#aaa', padding: '40px 2rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src="/logo.png" alt="cv2jd" style={{ height: 32, width: 'auto', borderRadius: 6 }} />
+            <img src="/logo.png" alt="cv2jd" style={{ height: 40, width: 'auto', borderRadius: 6 }} />
           </div>
           <div style={{ fontSize: 14 }}>© 2026 cv2jd. AI-powered CV tailoring.</div>
           <div style={{ display: 'flex', gap: 20, fontSize: 14 }}>
