@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cv2jd.vercel.app/sitemap.xml
+Sitemap: https://cv2jd-website.vercel.app/sitemap.xml

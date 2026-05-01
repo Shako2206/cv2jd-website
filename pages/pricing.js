@@ -46,17 +46,17 @@ export default function Pricing() {
         <meta name="description" content="cv2jd is completely free. No subscriptions, no credit card, no account. Tailor your CV to any job description and download it instantly." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="canonical" href="https://cv2jd.vercel.app/pricing" />
+        <link rel="canonical" href="https://cv2jd-website.vercel.app/pricing" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cv2jd.vercel.app/pricing" />
+        <meta property="og:url" content="https://cv2jd-website.vercel.app/pricing" />
         <meta property="og:title" content="Pricing — cv2jd is Free. No Sign-Up Required." />
         <meta property="og:description" content="cv2jd is completely free. No subscriptions, no credit card, no account. Tailor your CV to any job description and download it instantly." />
-        <meta property="og:image" content="https://cv2jd.vercel.app/logo.png" />
+        <meta property="og:image" content="https://cv2jd-website.vercel.app/logo.png" />
         <meta property="og:site_name" content="cv2jd" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Pricing — cv2jd is Free. No Sign-Up Required." />
         <meta name="twitter:description" content="cv2jd is completely free. No subscriptions, no credit card, no account. Tailor your CV to any job description and download it instantly." />
-        <meta name="twitter:image" content="https://cv2jd.vercel.app/logo.png" />
+        <meta name="twitter:image" content="https://cv2jd-website.vercel.app/logo.png" />
       </Head>
 
       {/* NAV */}

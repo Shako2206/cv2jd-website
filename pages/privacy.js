@@ -101,7 +101,7 @@ export default function Privacy() {
         <meta name="description" content="How cv2jd handles your data. We never store your CV, use no tracking cookies, and share as little as possible with third parties." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="canonical" href="https://cv2jd.vercel.app/privacy" />
+        <link rel="canonical" href="https://cv2jd-website.vercel.app/privacy" />
         <meta name="robots" content="noindex, follow" />
       </Head>
 
