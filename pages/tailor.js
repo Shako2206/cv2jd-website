@@ -460,6 +460,7 @@ export default function Tailor() {
                 <TabsList className="w-full rounded-none border-b border-border bg-[#fafafa] px-0">
                   <TabsTrigger value="cv" className="flex-1 rounded-none text-xs sm:text-sm">📄 Tailored CV</TabsTrigger>
                   <TabsTrigger value="keywords" className="flex-1 rounded-none text-xs sm:text-sm">🔑 Keywords</TabsTrigger>
+                  <TabsTrigger value="vocab" className="flex-1 rounded-none text-xs sm:text-sm">🔄 Vocabulary</TabsTrigger>
                   <TabsTrigger value="improvements" className="flex-1 rounded-none text-xs sm:text-sm">📈 Improvements</TabsTrigger>
                   <TabsTrigger value="gaps" className="flex-1 rounded-none text-xs sm:text-sm">⚠️ Gaps</TabsTrigger>
                 </TabsList>
@@ -482,6 +483,28 @@ export default function Tailor() {
                       <Badge key={i} className="px-3 sm:px-[18px] py-1.5 sm:py-2 text-xs sm:text-sm">{kw}</Badge>
                     ))}
                   </div>
+                </TabsContent>
+
+                <TabsContent value="vocab" className="p-4 sm:p-7">
+                  <p className="text-[#666] text-sm mb-4">
+                    Domain vocabulary swaps applied — where your CV used one term but this job description uses different language for the same concept. These translations help your CV speak the employer&apos;s language:
+                  </p>
+                  {Array.isArray(result.vocabularyMap) && result.vocabularyMap.length > 0 ? (
+                    <div className="flex flex-col gap-3">
+                      {result.vocabularyMap.filter(Boolean).map((item, i) => (
+                        <div key={i} className="px-3 sm:px-5 py-3 sm:py-4 bg-[#f8f8fc] rounded-xl border border-[#eee]">
+                          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                            <span className="text-xs sm:text-sm text-[#888] line-through">{item.cvSays}</span>
+                            <span className="text-[#bbb] text-sm">→</span>
+                            <span className="text-xs sm:text-sm font-semibold text-[#764ba2]">{item.jdSays}</span>
+                          </div>
+                          <p className="text-xs sm:text-sm text-[#666] leading-[1.5]">{item.why}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#888] italic">No vocabulary swaps identified — your CV already uses this role&apos;s language well.</p>
+                  )}
                 </TabsContent>
 
                 <TabsContent value="improvements" className="p-4 sm:p-7">
