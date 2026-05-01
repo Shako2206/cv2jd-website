@@ -343,7 +343,7 @@ export default function Tailor() {
       <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-md border-b border-border">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <img src="/logo.png" alt="cv2jd" className="h-12 w-auto" />
+            <img src="/logo.png" alt="cv2jd" className="h-24 w-auto" />
           </Link>
           <span className="hidden sm:block text-sm text-[#888] font-medium">AI CV Tailoring Tool</span>
         </div>

@@ -52,7 +52,7 @@ export default function Pricing() {
       <nav className="fixed top-0 w-full z-[1000] bg-white/[0.92] backdrop-blur-md border-b border-black/[0.08]">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 h-[68px] flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <img src="/logo.png" alt="cv2jd" className="h-12 w-auto" />
+            <img src="/logo.png" alt="cv2jd" className="h-24 w-auto" />
           </Link>
           <Button asChild className="text-[15px]">
             <Link href="/tailor">Try it free</Link>

@@ -36,7 +36,7 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-[1000] bg-white/[0.92] backdrop-blur-md border-b border-black/[0.08]">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 h-[68px] flex items-center justify-between">
           <div className="flex items-center">
-            <img src="/logo.png" alt="cv2jd" className="h-12 w-auto" />
+            <img src="/logo.png" alt="cv2jd" className="h-24 w-auto" />
           </div>
 
           {/* Desktop nav links */}
@@ -242,7 +242,7 @@ export default function Home() {
       <footer className="bg-[#0f0f1a] text-[#aaa] py-8 px-4 md:px-8">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row flex-wrap justify-between items-center gap-4 text-center sm:text-left">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="cv2jd" className="h-10 w-auto rounded-lg" />
+            <img src="/logo.png" alt="cv2jd" className="h-20 w-auto rounded-lg" />
           </div>
           <div className="text-sm">© 2026 cv2jd. AI-powered CV tailoring.</div>
           <div className="flex gap-5 text-sm">
