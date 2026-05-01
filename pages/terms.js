@@ -83,6 +83,8 @@ export default function Terms() {
         <meta name="description" content="Terms of Service for cv2jd — the free AI-powered CV tailoring tool." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="canonical" href="https://cv2jd.vercel.app/terms" />
+        <meta name="robots" content="noindex, follow" />
       </Head>
 
       {/* NAV */}

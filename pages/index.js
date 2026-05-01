@@ -26,10 +26,35 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>cv2jd — Tailor Your CV to Job Descriptions with AI</title>
-        <meta name="description" content="AI-powered CV tailoring that maximises alignment with job descriptions and creates ATS-friendly applications in seconds." />
+        <title>cv2jd — Tailor Your CV to Any Job Description with AI</title>
+        <meta name="description" content="Paste your CV and a job description — cv2jd rewrites your CV to match the role, pass ATS filters, and get to interview. Free, instant, no sign-up." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="canonical" href="https://cv2jd.vercel.app/" />
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://cv2jd.vercel.app/" />
+        <meta property="og:title" content="cv2jd — Tailor Your CV to Any Job Description with AI" />
+        <meta property="og:description" content="Paste your CV and a job description — cv2jd rewrites your CV to match the role, pass ATS filters, and get to interview. Free, instant, no sign-up." />
+        <meta property="og:image" content="https://cv2jd.vercel.app/logo.png" />
+        <meta property="og:site_name" content="cv2jd" />
+        {/* Twitter / X */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="cv2jd — Tailor Your CV to Any Job Description with AI" />
+        <meta name="twitter:description" content="Paste your CV and a job description — cv2jd rewrites your CV to match the role, pass ATS filters, and get to interview. Free, instant, no sign-up." />
+        <meta name="twitter:image" content="https://cv2jd.vercel.app/logo.png" />
+        {/* JSON-LD — SoftwareApplication */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "cv2jd",
+          "url": "https://cv2jd.vercel.app",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "description": "AI-powered CV tailoring tool. Paste your CV and a job description — cv2jd rewrites your CV to match the role, pass ATS filters, and land more interviews.",
+          "featureList": ["ATS keyword optimisation", "CV tailoring to job description", "Match score", "PDF and Word export", "Vocabulary gap analysis"]
+        }) }} />
       </Head>
 
       {/* NAV */}

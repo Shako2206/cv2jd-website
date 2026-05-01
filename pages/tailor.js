@@ -547,10 +547,21 @@ export default function Tailor() {
   return (
     <>
       <Head>
-        <title>Tailor Your CV — cv2jd</title>
-        <meta name="description" content="Paste your CV and job description to get an AI-tailored, ATS-optimised CV instantly." />
+        <title>Tailor Your CV to the Job Description — cv2jd</title>
+        <meta name="description" content="Paste your CV and a job description. cv2jd rewrites every bullet point to match the role, surfaces the right keywords, and gives you an ATS match score — in seconds." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="canonical" href="https://cv2jd.vercel.app/tailor" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://cv2jd.vercel.app/tailor" />
+        <meta property="og:title" content="Tailor Your CV to the Job Description — cv2jd" />
+        <meta property="og:description" content="Paste your CV and a job description. cv2jd rewrites every bullet point to match the role, surfaces the right keywords, and gives you an ATS match score — in seconds." />
+        <meta property="og:image" content="https://cv2jd.vercel.app/logo.png" />
+        <meta property="og:site_name" content="cv2jd" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Tailor Your CV to the Job Description — cv2jd" />
+        <meta name="twitter:description" content="Paste your CV and a job description. cv2jd rewrites every bullet point to match the role, surfaces the right keywords, and gives you an ATS match score — in seconds." />
+        <meta name="twitter:image" content="https://cv2jd.vercel.app/logo.png" />
       </Head>
 
       {/* NAV */}
