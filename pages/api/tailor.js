@@ -143,7 +143,7 @@ Field definitions:
 - tailoredCV: complete rewritten CV following the format spec above
 - keywords: ATS keywords from the JD that appear in the rewritten CV — use the JD's exact phrasing; never list a skill absent from the original CV
 - matchScore: honest 0–100 ATS score reflecting real keyword and competency alignment between the rewritten CV and this JD
-- vocabularyMap: 3–6 vocabulary swaps applied — where the CV used one term and you adopted the JD's language instead. Each entry: cvSays (what the original CV said), jdSays (what this JD calls it), why (one sentence on why this swap helps)
+- vocabularyMap: only list swaps you ACTUALLY made — check the tailoredCV text you just wrote and confirm each jdSays term appears in it before including the entry. 3–6 entries max. Each entry: cvSays (exact phrase from the original CV), jdSays (exact phrase now used in the tailoredCV — must be verifiable in the text above), why (one sentence). If you are not certain a swap was applied, leave it out.
 - improvements: 4–6 specific named changes made — e.g. "Moved AWS experience to top bullet under TechCorp — JD prioritises cloud infrastructure" not "Updated skills section"
 - gaps: 2–5 honest gaps — what the JD requires that is weak or absent in the CV, with an actionable suggestion to address each without fabricating experience`
 
@@ -234,7 +234,13 @@ export default async function handler(req, res) {
       tailoredCV: typeof parsed.tailoredCV === 'string' ? parsed.tailoredCV : '',
       keywords: Array.isArray(parsed.keywords) ? parsed.keywords : [],
       matchScore: typeof parsed.matchScore === 'number' ? Math.round(parsed.matchScore) : 0,
-      vocabularyMap: Array.isArray(parsed.vocabularyMap) ? parsed.vocabularyMap : [],
+      vocabularyMap: (() => {
+        if (!Array.isArray(parsed.vocabularyMap)) return []
+        const cvLower = (typeof parsed.tailoredCV === 'string' ? parsed.tailoredCV : '').toLowerCase()
+        return parsed.vocabularyMap.filter(e =>
+          e && typeof e.jdSays === 'string' && cvLower.includes(e.jdSays.toLowerCase())
+        )
+      })(),
       improvements: Array.isArray(parsed.improvements) ? parsed.improvements : [],
       gaps: Array.isArray(parsed.gaps) ? parsed.gaps : [],
     })
