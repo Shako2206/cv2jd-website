@@ -66,7 +66,7 @@ export default function Home() {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex gap-7 items-center">
-            {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['/pricing', 'Pricing']].map(([href, label]) => (
+            {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['/pricing', 'Pricing'], ['/blog', 'Blog']].map(([href, label]) => (
               <a key={href} href={href} className="text-[#555] text-[15px] font-medium hover:text-[#764ba2] transition-colors">
                 {label}
               </a>
@@ -96,7 +96,7 @@ export default function Home() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden border-t border-black/[0.06] bg-white/[0.98] px-6 py-4 flex flex-col gap-1">
-            {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['/pricing', 'Pricing']].map(([href, label]) => (
+            {[['#features', 'Features'], ['#how-it-works', 'How It Works'], ['/pricing', 'Pricing'], ['/blog', 'Blog']].map(([href, label]) => (
               <a
                 key={href}
                 href={href}

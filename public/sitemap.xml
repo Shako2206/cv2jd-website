@@ -16,6 +16,26 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://cv2jd-website.vercel.app/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cv2jd-website.vercel.app/blog/tailor-cv-job-description-netherlands</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cv2jd-website.vercel.app/blog/what-is-ats-how-to-pass-netherlands</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cv2jd-website.vercel.app/blog/cv-tips-netherlands-job-market</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://cv2jd-website.vercel.app/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
