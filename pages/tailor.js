@@ -221,6 +221,7 @@ export default function Tailor() {
     // ── BODY LOOP (two-column sections) ──────────────────
     let firstSection = true
     let skipNextBlank = false   // suppresses gap between section label and first content
+    let currentSection = ''
 
     while (idx < rawLines.length) {
       const line = rawLines[idx].trim()
@@ -236,6 +237,7 @@ export default function Tailor() {
 
       // ── Section header: label in left col, content in right col ──
       if (/^[A-Z][A-Z\s&\/\(\)\-]{2,}$/.test(line) && line.length < 50) {
+        currentSection = line
         if (!firstSection) {
           // Thin rule between sections (from OneColumnModern border-bottom)
           y += 4
@@ -254,6 +256,28 @@ export default function Tailor() {
         doc.text(doc.splitTextToSize(line, LC_W), LC_X, y)
         // y stays — right column content starts at the same baseline
         skipNextBlank = true
+        continue
+      }
+
+      // ── Skills line: "Category: skill1, skill2" ───────
+      if (currentSection === 'SKILLS' && line.includes(':')) {
+        const colon = line.indexOf(':')
+        const category = line.slice(0, colon)
+        const skills = line.slice(colon + 1).trim()
+        const skillsWrapped = doc.splitTextToSize(skills, RC_W)
+        need(lh(9) + skillsWrapped.length * lh(9.5) + 5)
+        // Category label — bold indigo, small caps style
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(8.5)
+        doc.setTextColor(...C_ACCENT)
+        doc.text(category.toUpperCase(), RC_X, y)
+        y += lh(8.5) + 0.5
+        // Skills list — normal, dark
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(9.5)
+        doc.setTextColor(...C_DARK)
+        doc.text(skillsWrapped, RC_X, y)
+        y += skillsWrapped.length * lh(9.5) + 4
         continue
       }
 
@@ -277,7 +301,7 @@ export default function Tailor() {
       }
 
       // ── Job title + company·date (look-ahead merge) ───
-      if (line.length < 90 && /^[A-Z]/.test(line) && !line.includes('·') && !line.includes('–') && !line.endsWith('.') && !line.includes('@')) {
+      if (currentSection !== 'SKILLS' && line.length < 90 && /^[A-Z]/.test(line) && !line.includes('·') && !line.includes('–') && !line.endsWith('.') && !line.includes('@')) {
         const next = rawLines[idx]?.trim() || ''
         if (next.includes('·') && /^[A-Z]/.test(next)) {
           const mid = next.indexOf('·')
