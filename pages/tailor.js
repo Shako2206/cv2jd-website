@@ -157,39 +157,36 @@ export default function Tailor() {
 
     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
     const PW = 210, PH = 297
-    const ML = 20, MR = 20, MT = 28, MB = 22
+    const ML = 18, MR = 18, MT = 26, MB = 20
     const CW = PW - ML - MR
 
-    // Colour palette
-    const C_NAME    = [15, 23, 42]      // near-black navy
-    const C_ACCENT  = [99, 102, 241]    // indigo
-    const C_ACCENT2 = [139, 92, 246]    // violet
-    const C_DARK    = [30, 41, 59]      // body text
-    const C_MID     = [71, 85, 105]     // company / contact / date
-    const C_LIGHT   = [148, 163, 184]   // page numbers
-    const C_SEC_BG  = [238, 242, 255]   // section header background
+    const C_NAME   = [15, 23, 42]     // near-black navy
+    const C_ACCENT = [79, 70, 229]    // indigo-600
+    const C_DARK   = [30, 41, 59]     // body text
+    const C_MID    = [71, 85, 105]    // dates / company
+    const C_LIGHT  = [148, 163, 184]  // footer
 
     let y = MT
-    const LHF = 1.42
+    const LHF = 1.38
     function lh(size) { return size * 0.3528 * LHF }
     function need(mm) { if (y + mm > PH - MB) { doc.addPage(); y = MT } }
 
     const rawLines = result.tailoredCV.split('\n')
     let idx = 0
 
-    // ── NAME (centred) ───────────────────────────────────
+    // ── NAME (centred, large) ────────────────────────────
     while (idx < rawLines.length && !rawLines[idx].trim()) idx++
     const nameLine = rawLines[idx]?.trim() || ''
     if (nameLine) {
       doc.setFont('helvetica', 'bold')
-      doc.setFontSize(27)
+      doc.setFontSize(26)
       doc.setTextColor(...C_NAME)
       doc.text(nameLine, PW / 2, y, { align: 'center' })
-      y += lh(27) + 1
+      y += lh(26) + 2
       idx++
     }
 
-    // ── CONTACT LINES (centred, joined with  ·  ) ────────
+    // ── CONTACT LINE (centred, joined) ───────────────────
     const contactLines = []
     while (idx < rawLines.length) {
       const l = rawLines[idx].trim()
@@ -199,128 +196,137 @@ export default function Tailor() {
       idx++
     }
     if (contactLines.length) {
-      const joined = contactLines.join('   ·   ')
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(8.5)
       doc.setTextColor(...C_MID)
-      const wrapped = doc.splitTextToSize(joined, CW)
-      wrapped.forEach(line => {
-        doc.text(line, PW / 2, y, { align: 'center' })
-        y += lh(8.5)
-      })
-      y += 4
+      const wrapped = doc.splitTextToSize(contactLines.join('   ·   '), CW)
+      wrapped.forEach(line => { doc.text(line, PW / 2, y, { align: 'center' }); y += lh(8.5) })
+      y += 3.5
     }
 
-    // ── DOUBLE ACCENT RULE ───────────────────────────────
+    // ── SINGLE ACCENT RULE ───────────────────────────────
     doc.setDrawColor(...C_ACCENT)
-    doc.setLineWidth(1.0)
+    doc.setLineWidth(1.3)
     doc.line(ML, y, PW - MR, y)
-    y += 1.5
-    doc.setDrawColor(...C_ACCENT2)
-    doc.setLineWidth(0.25)
-    doc.line(ML, y, PW - MR, y)
-    y += 6.5
+    y += 7.5
 
     // ── BODY LOOP ────────────────────────────────────────
     while (idx < rawLines.length) {
       const line = rawLines[idx].trim()
       idx++
 
-      // Empty line → small gap
-      if (!line) { y += 2.5; continue }
+      if (!line) { y += 2; continue }
 
-      // Section header: ALL CAPS, ≤ 50 chars
+      // Section header — bold indigo caps + thin rule below (LaTeX hrule style)
       if (/^[A-Z][A-Z\s&\/\(\)\-]{2,}$/.test(line) && line.length < 50) {
         y += 3
-        need(16)
-        doc.setFillColor(...C_SEC_BG)
-        doc.rect(ML - 3, y - 5.5, CW + 6, 11, 'F')
+        need(15)
         doc.setFont('helvetica', 'bold')
-        doc.setFontSize(8.5)
+        doc.setFontSize(9)
         doc.setTextColor(...C_ACCENT)
-        doc.text(line.toUpperCase(), ML, y)
-        y += lh(8.5) + 5
+        doc.text(line, ML, y)
+        y += lh(9) + 1.5
+        doc.setDrawColor(...C_ACCENT)
+        doc.setLineWidth(0.5)
+        doc.line(ML, y, PW - MR, y)
+        y += 5
         continue
       }
 
-      // Company · date line (contains middle-dot · and starts with capital)
-      if (line.includes('·') && /^[A-Z]/.test(line)) {
-        const mid = line.indexOf('·')
-        const company = line.slice(0, mid).trim()
-        const date = line.slice(mid + 1).trim()
-        need(lh(9) + 2)
-        doc.setFont('helvetica', 'normal')
-        doc.setFontSize(9)
-        doc.setTextColor(...C_MID)
-        doc.text(company, ML, y)
-        if (date) {
-          doc.setFont('helvetica', 'italic')
-          doc.text(date, PW - MR, y, { align: 'right' })
-        }
-        y += lh(9) + 2.5
-        continue
-      }
-
-      // Standalone date line (starts with year or month abbreviation)
-      if (/^\d{4}/.test(line) || /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i.test(line)) {
-        need(lh(9) + 1)
-        doc.setFont('helvetica', 'italic')
-        doc.setFontSize(9)
-        doc.setTextColor(...C_MID)
-        doc.text(line, PW - MR, y, { align: 'right' })
-        y += lh(9) + 1
-        continue
-      }
-
-      // Bullet point
+      // Bullet — middle dot in indigo (LaTeX \cdot style)
       if (/^[•\-·–\*□]/.test(line)) {
         const content = line.replace(/^[•\-·–\*□]\s*/, '')
         doc.setFont('helvetica', 'normal')
         doc.setFontSize(9.5)
-        const wrapped = doc.splitTextToSize(content, CW - 6)
-        need(wrapped.length * lh(9.5) + 2)
-        // Small filled indigo square as bullet marker
-        doc.setFillColor(...C_ACCENT)
-        doc.rect(ML + 0.5, y - 2.1, 1.6, 1.6, 'F')
+        const wrapped = doc.splitTextToSize(content, CW - 5)
+        need(wrapped.length * lh(9.5) + 1.5)
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(11)
+        doc.setTextColor(...C_ACCENT)
+        doc.text('·', ML + 1, y)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(9.5)
         doc.setTextColor(...C_DARK)
-        doc.text(wrapped, ML + 5, y)
-        y += wrapped.length * lh(9.5) + 2
+        doc.text(wrapped, ML + 4.5, y)
+        y += wrapped.length * lh(9.5) + 1.5
         continue
       }
 
-      // Job title / degree: short, capitalised, no period, no @
-      if (line.length < 90 && /^[A-Z]/.test(line) && !line.endsWith('.') && !line.includes('@')) {
-        need(lh(11) + 2.5)
+      // Job title — look ahead for company·date on next line and combine (LaTeX rSubsection style)
+      if (line.length < 90 && /^[A-Z]/.test(line) && !line.includes('·') && !line.includes('–') && !line.endsWith('.') && !line.includes('@')) {
+        const next = rawLines[idx]?.trim() || ''
+        if (next.includes('·') && /^[A-Z]/.test(next)) {
+          const mid = next.indexOf('·')
+          const company = next.slice(0, mid).trim()
+          const date = next.slice(mid + 1).trim()
+          idx++
+          need(lh(11) + lh(9) + 4)
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(11)
+          doc.setTextColor(...C_DARK)
+          doc.text(line, ML, y)
+          if (date) {
+            doc.setFont('helvetica', 'normal')
+            doc.setFontSize(9)
+            doc.setTextColor(...C_MID)
+            doc.text(date, PW - MR, y, { align: 'right' })
+          }
+          y += lh(11) + 0.5
+          doc.setFont('helvetica', 'italic')
+          doc.setFontSize(9)
+          doc.setTextColor(...C_MID)
+          doc.text(company, ML, y)
+          y += lh(9) + 3.5
+          continue
+        }
+        need(lh(11) + 2)
         doc.setFont('helvetica', 'bold')
         doc.setFontSize(11)
         doc.setTextColor(...C_DARK)
         doc.text(doc.splitTextToSize(line, CW), ML, y)
-        y += lh(11) + 2.5
+        y += lh(11) + 2
         continue
       }
 
-      // Body paragraph (summary, etc.)
+      // Company·date line (standalone fallback — education etc.)
+      if (line.includes('·') && /^[A-Z]/.test(line)) {
+        const mid = line.indexOf('·')
+        const left = line.slice(0, mid).trim()
+        const right = line.slice(mid + 1).trim()
+        need(lh(9) + 2)
+        doc.setFont('helvetica', 'italic')
+        doc.setFontSize(9)
+        doc.setTextColor(...C_MID)
+        doc.text(left, ML, y)
+        if (right) {
+          doc.setFont('helvetica', 'normal')
+          doc.text(right, PW - MR, y, { align: 'right' })
+        }
+        y += lh(9) + 2
+        continue
+      }
+
+      // Body paragraph (summary etc.)
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(9.5)
       doc.setTextColor(...C_DARK)
       const wrapped = doc.splitTextToSize(line, CW)
       need(wrapped.length * lh(9.5) + 1.5)
       doc.text(wrapped, ML, y)
-      y += wrapped.length * lh(9.5) + 1.5
+      y += wrapped.length * lh(9.5) + 2
     }
 
-    // ── PAGE NUMBERS ─────────────────────────────────────
+    // ── PAGE FOOTER ──────────────────────────────────────
     const total = doc.getNumberOfPages()
     for (let p = 1; p <= total; p++) {
       doc.setPage(p)
-      // Subtle footer rule
       doc.setDrawColor(...C_LIGHT)
       doc.setLineWidth(0.2)
-      doc.line(ML, PH - MB + 4, PW - MR, PH - MB + 4)
+      doc.line(ML, PH - MB + 3, PW - MR, PH - MB + 3)
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(7.5)
       doc.setTextColor(...C_LIGHT)
-      doc.text(`${p} / ${total}`, PW / 2, PH - 12, { align: 'center' })
+      doc.text(`${p} / ${total}`, PW / 2, PH - 10, { align: 'center' })
     }
 
     doc.save('tailored-cv.pdf')
