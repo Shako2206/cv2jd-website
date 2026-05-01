@@ -355,7 +355,166 @@ export default function Tailor() {
     }
 
     doc.save('tailored-cv.pdf')
-    track('cv_downloaded', { scoreBucket: scoreBucket(result?.matchScore || 0) })
+    track('cv_downloaded', { format: 'pdf', scoreBucket: scoreBucket(result?.matchScore || 0) })
+  }
+
+  async function handleDownloadDocx() {
+    if (!result?.tailoredCV) return
+    const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle } = await import('docx')
+
+    const INDIGO = '4F46E5'
+    const DARK   = '1E293B'
+    const MID    = '64748B'
+    const BLACK  = '0F172A'
+
+    const paras = []
+    const lines = result.tailoredCV.split('\n')
+    let idx = 0
+
+    // Skip leading blank lines
+    while (idx < lines.length && !lines[idx].trim()) idx++
+
+    // Name — first non-empty line
+    const name = lines[idx]?.trim() || ''
+    if (name) {
+      paras.push(new Paragraph({
+        children: [new TextRun({ text: name, bold: true, size: 48, color: BLACK, font: 'Calibri' })],
+        spacing: { after: 60 },
+      }))
+      idx++
+    }
+
+    // Contact — lines until blank or section header
+    const contactParts = []
+    while (idx < lines.length) {
+      const l = lines[idx].trim()
+      if (!l || /^[A-Z][A-Z\s&\/\(\)\-]{2,}$/.test(l)) break
+      contactParts.push(l)
+      idx++
+    }
+    if (contactParts.length) {
+      paras.push(new Paragraph({
+        children: [new TextRun({ text: contactParts.join('   ·   '), size: 18, color: MID, font: 'Calibri' })],
+        spacing: { after: 280 },
+      }))
+    }
+
+    let section = ''
+
+    while (idx < lines.length) {
+      const line = lines[idx].trim()
+      idx++
+
+      if (!line) continue
+
+      // Section header (ALL CAPS, < 60 chars)
+      if (/^[A-Z][A-Z\s&\/\(\)\-]{2,}$/.test(line) && line.length < 60) {
+        section = line
+        paras.push(new Paragraph({
+          children: [new TextRun({ text: line, bold: true, size: 20, color: INDIGO, font: 'Calibri', allCaps: true })],
+          spacing: { before: 320, after: 120 },
+          border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: 'C7D2FE', space: 4 } },
+        }))
+        continue
+      }
+
+      // Bullet
+      if (/^[•\-·–\*]/.test(line)) {
+        const content = line.replace(/^[•\-·–\*]\s*/, '')
+        paras.push(new Paragraph({
+          children: [new TextRun({ text: content, size: 20, color: DARK, font: 'Calibri' })],
+          bullet: { level: 0 },
+          spacing: { before: 40, after: 40 },
+        }))
+        continue
+      }
+
+      // Skills line — bold category name
+      if (section === 'SKILLS' && line.includes(':')) {
+        const colon = line.indexOf(':')
+        paras.push(new Paragraph({
+          children: [
+            new TextRun({ text: line.slice(0, colon + 1), bold: true, size: 20, color: DARK, font: 'Calibri' }),
+            new TextRun({ text: line.slice(colon + 1), size: 20, color: DARK, font: 'Calibri' }),
+          ],
+          spacing: { before: 60, after: 60 },
+        }))
+        continue
+      }
+
+      // Job title / degree — look ahead for company · date line
+      if (/^[A-Z]/.test(line) && !line.includes('·') && !line.includes('–') && line.length < 90) {
+        const next = lines[idx]?.trim() || ''
+        if (next.includes('·') && /\d{4}/.test(next)) {
+          paras.push(new Paragraph({
+            children: [new TextRun({ text: line, bold: true, size: 22, color: DARK, font: 'Calibri' })],
+            spacing: { before: 200, after: 40 },
+          }))
+          const mid = next.indexOf('·')
+          const company = next.slice(0, mid).trim()
+          const date = next.slice(mid + 1).trim()
+          paras.push(new Paragraph({
+            children: [
+              new TextRun({ text: company, italics: true, size: 20, color: MID, font: 'Calibri' }),
+              ...(date ? [new TextRun({ text: `  ·  ${date}`, italics: true, size: 20, color: MID, font: 'Calibri' })] : []),
+            ],
+            spacing: { before: 0, after: 80 },
+          }))
+          idx++
+          continue
+        }
+        // Plain heading (standalone degree, etc.)
+        paras.push(new Paragraph({
+          children: [new TextRun({ text: line, bold: true, size: 22, color: DARK, font: 'Calibri' })],
+          spacing: { before: 200, after: 80 },
+        }))
+        continue
+      }
+
+      // Company · date standalone fallback
+      if (line.includes('·') && /^[A-Z]/.test(line)) {
+        const mid = line.indexOf('·')
+        paras.push(new Paragraph({
+          children: [
+            new TextRun({ text: line.slice(0, mid).trim(), italics: true, size: 20, color: MID, font: 'Calibri' }),
+            new TextRun({ text: `  ·  ${line.slice(mid + 1).trim()}`, italics: true, size: 20, color: MID, font: 'Calibri' }),
+          ],
+          spacing: { before: 0, after: 80 },
+        }))
+        continue
+      }
+
+      // Body paragraph (summary prose, etc.)
+      paras.push(new Paragraph({
+        children: [new TextRun({ text: line, size: 20, color: DARK, font: 'Calibri' })],
+        spacing: { before: 40, after: 80 },
+      }))
+    }
+
+    const wordDoc = new Document({
+      styles: {
+        default: {
+          document: { run: { font: 'Calibri', size: 20 } },
+        },
+      },
+      sections: [{
+        properties: {
+          page: { margin: { top: 1080, right: 1296, bottom: 1080, left: 1296 } },
+        },
+        children: paras,
+      }],
+    })
+
+    const blob = await Packer.toBlob(wordDoc)
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'tailored-cv.docx'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    track('cv_downloaded', { format: 'docx', scoreBucket: scoreBucket(result?.matchScore || 0) })
   }
 
   const score = result?.matchScore ?? 0
@@ -480,7 +639,13 @@ export default function Tailor() {
                       onClick={handleDownload}
                       className="bg-white/15 text-white border-2 border-white/40 px-4 sm:px-[22px] py-2 sm:py-2.5 rounded-full text-sm font-bold cursor-pointer hover:bg-white/25 transition-colors"
                     >
-                      ⬇ Download PDF
+                      ⬇ PDF
+                    </button>
+                    <button
+                      onClick={handleDownloadDocx}
+                      className="bg-white/15 text-white border-2 border-white/40 px-4 sm:px-[22px] py-2 sm:py-2.5 rounded-full text-sm font-bold cursor-pointer hover:bg-white/25 transition-colors"
+                    >
+                      ⬇ Word
                     </button>
                   </div>
                 </div>
