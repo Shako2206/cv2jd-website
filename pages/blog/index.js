@@ -48,31 +48,47 @@ export default function Blog() {
             CV advice and job application tips for the Netherlands job market.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
             {posts.map(post => (
               <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
                 <article style={{
-                  background: 'white', borderRadius: 16, padding: '28px 32px',
+                  background: 'white', borderRadius: 20, overflow: 'hidden',
                   border: '1px solid #e8e8f0', cursor: 'pointer',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                  transition: 'box-shadow 0.2s, border-color 0.2s',
+                  transition: 'box-shadow 0.2s, border-color 0.2s, transform 0.2s',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(118,75,162,0.1)'; e.currentTarget.style.borderColor = '#c4b5fd' }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)'; e.currentTarget.style.borderColor = '#e8e8f0' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(118,75,162,0.12)'; e.currentTarget.style.borderColor = '#c4b5fd'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)'; e.currentTarget.style.borderColor = '#e8e8f0'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
-                  <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
-                    <span style={{ fontSize: 13, color: '#888' }}>{post.date}</span>
-                    <span style={{ fontSize: 13, color: '#888' }}>·</span>
-                    <span style={{ fontSize: 13, color: '#888' }}>{post.readTime}</span>
+                  {/* Cover image */}
+                  <div style={{
+                    background: post.cover.gradient,
+                    height: 160,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <span style={{ fontSize: 56, lineHeight: 1 }} role="img" aria-label={post.cover.alt}>
+                      {post.cover.emoji}
+                    </span>
                   </div>
-                  <h2 style={{ fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', fontWeight: 800, color: '#1a1a2e', marginBottom: 10, lineHeight: 1.35 }}>
-                    {post.title}
-                  </h2>
-                  <p style={{ fontSize: 15, color: '#555', lineHeight: 1.65, margin: 0 }}>
-                    {post.description}
-                  </p>
-                  <div style={{ marginTop: 16, fontSize: 14, fontWeight: 600, color: '#764ba2' }}>
-                    Read article →
+
+                  {/* Card body */}
+                  <div style={{ padding: '24px 28px 28px' }}>
+                    <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
+                      <span style={{ fontSize: 13, color: '#888' }}>{post.date}</span>
+                      <span style={{ fontSize: 13, color: '#888' }}>·</span>
+                      <span style={{ fontSize: 13, color: '#888' }}>{post.readTime}</span>
+                    </div>
+                    <h2 style={{ fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', fontWeight: 800, color: '#1a1a2e', marginBottom: 10, lineHeight: 1.35 }}>
+                      {post.title}
+                    </h2>
+                    <p style={{ fontSize: 15, color: '#555', lineHeight: 1.65, margin: 0 }}>
+                      {post.description}
+                    </p>
+                    <div style={{ marginTop: 16, fontSize: 14, fontWeight: 600, color: '#764ba2' }}>
+                      Read article →
+                    </div>
                   </div>
                 </article>
               </Link>

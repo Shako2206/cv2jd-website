@@ -126,7 +126,21 @@ export default function BlogPost({ post }) {
         </div>
       </nav>
 
-      <main style={{ background: '#fafafa', minHeight: 'calc(100vh - 68px)', padding: '56px 2rem 80px' }}>
+      {/* Cover image — full width, outside the content column */}
+      <div style={{
+        background: post.cover.gradient,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '56px 2rem',
+      }}>
+        <span style={{ fontSize: 80, lineHeight: 1 }} role="img" aria-label={post.cover.alt}>
+          {post.cover.emoji}
+        </span>
+      </div>
+
+      <main style={{ background: '#fafafa', minHeight: 'calc(100vh - 68px)', padding: '48px 2rem 80px' }}>
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
 
           {/* Breadcrumb */}
