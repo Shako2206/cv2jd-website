@@ -1,9 +1,24 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+
+function useVisible(threshold = 0.12) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    if (!ref.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect() } },
+      { threshold }
+    )
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return [ref, visible]
+}
 
 const features = [
   { icon: '🎯', title: 'ATS-Optimised', desc: 'Our AI ensures your CV passes Applicant Tracking Systems by incorporating the right keywords and formatting.' },
@@ -22,6 +37,8 @@ const steps = [
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [featuresRef, featuresVisible] = useVisible()
+  const [stepsRef, stepsVisible] = useVisible()
 
   return (
     <>
@@ -115,27 +132,27 @@ export default function Home() {
         className="min-h-screen pt-[68px] relative overflow-hidden flex items-center"
         style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 45%, #c471ed 75%, #f64f59 100%)' }}
       >
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-white/[0.08] -top-[10%] -right-[5%] pointer-events-none" />
-        <div className="absolute w-[250px] h-[250px] rounded-full bg-white/[0.06] bottom-[5%] -left-[3%] pointer-events-none" />
-        <div className="absolute w-[150px] h-[150px] rounded-full bg-white/[0.05] top-[30%] left-[42%] pointer-events-none" />
+        <div className="orb-a absolute w-[400px] h-[400px] rounded-full bg-white/[0.08] -top-[10%] -right-[5%] pointer-events-none" />
+        <div className="orb-b absolute w-[250px] h-[250px] rounded-full bg-white/[0.06] bottom-[5%] -left-[3%] pointer-events-none" />
+        <div className="orb-c absolute w-[150px] h-[150px] rounded-full bg-white/[0.05] top-[30%] left-[42%] pointer-events-none" />
 
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-14 md:py-24 w-full grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px] items-center">
           <div className="text-white">
-            <div className="inline-flex items-center gap-2 bg-white/[0.18] rounded-full px-4 py-2 mb-6 text-xs md:text-sm font-semibold border border-white/25">
+            <div className="hero-badge inline-flex items-center gap-2 bg-white/[0.18] rounded-full px-4 py-2 mb-6 text-xs md:text-sm font-semibold border border-white/25">
               ⭐ The #1 AI CV Tailoring Platform
             </div>
 
-            <h1 className="font-black leading-[1.08] mb-5 tracking-tight" style={{ fontSize: 'clamp(2.2rem, 6vw, 4.2rem)' }}>
+            <h1 className="hero-title font-black leading-[1.08] mb-5 tracking-tight" style={{ fontSize: 'clamp(2.2rem, 6vw, 4.2rem)' }}>
               Tailor Your CV<br />
               to Job Descriptions<br />
               with <span className="text-[#fbbf24]">AI</span>
             </h1>
 
-            <p className="text-base md:text-[1.15rem] leading-[1.65] opacity-[0.92] mb-8 max-w-[520px]">
+            <p className="hero-sub text-base md:text-[1.15rem] leading-[1.65] opacity-[0.92] mb-8 max-w-[520px]">
               Our AI technology customises your CV to perfectly match each job description, creating ATS-friendly applications that highlight your most relevant skills and experience.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="hero-cta flex flex-col sm:flex-row gap-3">
               <Button
                 asChild
                 className="h-12 md:h-14 px-7 md:px-9 text-base bg-white text-[#764ba2] hover:bg-white/90 shadow-[0_6px_24px_rgba(0,0,0,0.18)] font-bold"
@@ -152,7 +169,7 @@ export default function Home() {
           </div>
 
           <div className="hidden md:flex justify-center">
-            <div className="bg-white rounded-[20px] p-7 shadow-[0_24px_80px_rgba(0,0,0,0.3)] w-full max-w-[440px]">
+            <div className="hero-card bg-white rounded-[20px] p-7 shadow-[0_24px_80px_rgba(0,0,0,0.3)] w-full max-w-[440px]">
               <div className="flex items-center gap-3.5 mb-[18px]">
                 <div
                   className="w-[52px] h-[52px] rounded-full flex items-center justify-center text-white text-lg font-extrabold flex-shrink-0"
@@ -182,7 +199,7 @@ export default function Home() {
                   <span className="text-[22px] font-black text-[#764ba2]">94%</span>
                 </div>
                 <div className="h-2 bg-[#e5e7eb] rounded overflow-hidden">
-                  <div className="h-2 w-[94%] rounded" style={{ background: 'linear-gradient(90deg, #667eea, #764ba2)' }} />
+                  <div className="score-bar h-2 rounded" style={{ background: 'linear-gradient(90deg, #667eea, #764ba2)' }} />
                 </div>
                 <div className="flex gap-1.5 mt-3 flex-wrap">
                   {['React', 'TypeScript', 'AWS', 'CI/CD', 'Agile'].map(kw => (
@@ -206,9 +223,13 @@ export default function Home() {
               One intelligent tool that rewrites your CV to perfectly match any job — in seconds.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
+          <div ref={featuresRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
             {features.map((f, i) => (
-              <Card key={i} className="p-6 md:p-7 border-[#e8e8f0] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(118,75,162,0.12)] transition-all cursor-default">
+              <Card
+                key={i}
+                className={`p-6 md:p-7 border-[#e8e8f0] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(118,75,162,0.12)] transition-all cursor-default reveal-card ${featuresVisible ? 'revealed' : ''}`}
+                style={{ '--delay': `${i * 80}ms` }}
+              >
                 <div className="text-[28px] md:text-[32px] mb-3 md:mb-4">{f.icon}</div>
                 <h3 className="text-base md:text-lg font-bold mb-2 text-[#1a1a2e]">{f.title}</h3>
                 <p className="text-sm md:text-[15px] text-[#666] leading-[1.6]">{f.desc}</p>
@@ -227,9 +248,9 @@ export default function Home() {
             </h2>
             <p className="text-base md:text-[1.1rem] text-[#666]">Simple, fast, and incredibly effective.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
+          <div ref={stepsRef} className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
             {steps.map((s, i) => (
-              <div key={i} className="text-center">
+              <div key={i} className={`text-center reveal-card ${stepsVisible ? 'revealed' : ''}`} style={{ '--delay': `${i * 120}ms` }}>
                 <div
                   className="w-16 h-16 md:w-[72px] md:h-[72px] rounded-full mx-auto mb-4 md:mb-5 flex items-center justify-center text-xl md:text-[22px] font-black text-white shadow-[0_8px_24px_rgba(118,75,162,0.3)]"
                   style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
@@ -262,6 +283,106 @@ export default function Home() {
           </Button>
         </div>
       </section>
+
+      <style jsx global>{`
+        /* ── Hero entrance ─────────────────────────────── */
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .hero-badge {
+          opacity: 0;
+          animation: fadeUp 0.6s ease forwards;
+          animation-delay: 0.05s;
+        }
+        .hero-title {
+          opacity: 0;
+          animation: fadeUp 0.65s ease forwards;
+          animation-delay: 0.18s;
+        }
+        .hero-sub {
+          opacity: 0;
+          animation: fadeUp 0.65s ease forwards;
+          animation-delay: 0.32s;
+        }
+        .hero-cta {
+          opacity: 0;
+          animation: fadeUp 0.65s ease forwards;
+          animation-delay: 0.46s;
+        }
+
+        /* ── Hero card entrance + float ────────────────── */
+        @keyframes cardEnter {
+          from { opacity: 0; transform: translateY(36px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0px) scale(1); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-10px); }
+        }
+        .hero-card {
+          opacity: 0;
+          animation:
+            cardEnter 0.7s ease forwards 0.3s,
+            float 4.5s ease-in-out infinite 1.2s;
+        }
+
+        /* ── Score bar fill ─────────────────────────────── */
+        @keyframes scoreBarFill {
+          from { width: 0%; }
+          to   { width: 94%; }
+        }
+        .score-bar {
+          width: 0%;
+          animation: scoreBarFill 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation-delay: 1.1s;
+        }
+
+        /* ── Background orb drift ───────────────────────── */
+        @keyframes driftA {
+          0%, 100% { transform: translate(0, 0); }
+          40%       { transform: translate(22px, -28px); }
+          70%       { transform: translate(-12px, 14px); }
+        }
+        @keyframes driftB {
+          0%, 100% { transform: translate(0, 0); }
+          35%       { transform: translate(-18px, 22px); }
+          65%       { transform: translate(14px, -10px); }
+        }
+        @keyframes driftC {
+          0%, 100% { transform: translate(0, 0); }
+          50%       { transform: translate(10px, 18px); }
+        }
+        .orb-a { animation: driftA 14s ease-in-out infinite; }
+        .orb-b { animation: driftB 18s ease-in-out infinite; }
+        .orb-c { animation: driftC 11s ease-in-out infinite; }
+
+        /* ── Scroll reveal ──────────────────────────────── */
+        @keyframes revealUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .reveal-card {
+          opacity: 0;
+        }
+        .reveal-card.revealed {
+          animation: revealUp 0.55s ease forwards;
+          animation-delay: var(--delay, 0ms);
+        }
+
+        /* ── Respect reduced motion ─────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+          .hero-badge, .hero-title, .hero-sub, .hero-cta,
+          .hero-card, .score-bar, .orb-a, .orb-b, .orb-c,
+          .reveal-card, .reveal-card.revealed {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+            width: 94%;
+          }
+          .score-bar { width: 94%; }
+        }
+      `}</style>
 
       {/* FOOTER */}
       <footer className="bg-[#0f0f1a] text-[#aaa] py-8 px-4 md:px-8">
